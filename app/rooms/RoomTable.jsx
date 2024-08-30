@@ -1,18 +1,25 @@
 'use client';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { CaretLeft, CaretRight, Eye, PencilSimple, Plus, MagnifyingGlass } from '@phosphor-icons/react';
+import Swal from 'sweetalert2';
+import { CaretLeft, CaretRight, Eye, PencilSimple, Plus, MagnifyingGlass, Trash, ToggleRight } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 
-export default function RequestTable({ openEdit,openCreate,openPreview }) {
+export default function RequestTable({ openEdit, openCreate, openPreview }) {
     const dropdownRefs = useRef({});
     const [selectedHotelId, setSelectedHotelId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
-   
+
     const itemsPerPage = 10;
     const totalPages = 10;
 
-    // Memoize pagination set
+    const initialRoomsData = [
+        { id: 1, type: "Deluxe Suite", people: 4, rooms: 2, price: "$250", status: "FULL Reserved" },
+        { id: 2, type: "Standard Room", people: 2, rooms: 1, price: "$100", status: "Available" }
+     ];
+
+    const [roomsData, setRoomsData] = useState(initialRoomsData);
+
     const currentSet = useMemo(() => {
         if (totalPages <= 6) {
             return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -21,7 +28,6 @@ export default function RequestTable({ openEdit,openCreate,openPreview }) {
         return Array.from({ length: 6 }, (_, i) => startPage + i).filter(page => page <= totalPages);
     }, [currentPage, totalPages]);
 
-    // Memoize the event handler
     const handleClickOutside = useCallback((event) => {
         if (selectedHotelId !== null) {
             const dropdown = dropdownRefs.current[selectedHotelId];
@@ -36,13 +42,48 @@ export default function RequestTable({ openEdit,openCreate,openPreview }) {
         return () => document.removeEventListener("click", handleClickOutside);
     }, [handleClickOutside]);
 
- 
     const handleSearchChange = useCallback((event) => {
         setSearchTerm(event.target.value);
     }, []);
 
     const paginate = useCallback((pageNumber) => {
         setCurrentPage(pageNumber);
+    }, []);
+
+    const handleDelete = useCallback((roomId) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to delete this room?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setRoomsData(prevData => prevData.filter(room => room.id !== roomId));
+                Swal.fire('Deleted!', 'The room has been deleted.', 'success');
+            }
+        });
+    }, []);
+
+    const toggleStatus = useCallback((roomId) => {
+        Swal.fire({
+            title: 'Change Room Status',
+            text: "Do you want to change the status of this room?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, change it!',
+            cancelButtonText: 'No, keep it!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setRoomsData(prevData => prevData.map(room =>
+                    room.id === roomId
+                        ? { ...room, status: room.status === "Available" ? "FULL Reserved" : "Available" }
+                        : room
+                ));
+                Swal.fire('Status Changed!', 'The room status has been updated.', 'success');
+            }
+        });
     }, []);
 
     return (
@@ -52,7 +93,7 @@ export default function RequestTable({ openEdit,openCreate,openPreview }) {
                     <div className="bg-white relative shadow-md rounded-lg">
                         <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                             <div className="w-full md:w-1/2">
-                                <h4>All Customers</h4>
+                                <h4>All Rooms</h4>
                             </div>
                             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
                                 <form className="flex items-center justify-between">
@@ -79,10 +120,10 @@ export default function RequestTable({ openEdit,openCreate,openPreview }) {
                                 <button
                                     onClick={openCreate}
                                     type="button"
-                                    className="flex gap-2 w-60 items-center justify-center duration-150 ease-linear text-white hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 bg-green-700"
+                                    className="flex gap-2 w-full items-center justify-center duration-150 ease-linear text-white hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 bg-green-700"
                                 >
                                     <Plus size={18} weight="bold" />
-                                    Add New
+                                    Add Room
                                 </button>
                             </div>
                         </div>
@@ -90,69 +131,83 @@ export default function RequestTable({ openEdit,openCreate,openPreview }) {
                             <table className="w-full text-sm text-left text-gray-500">
                                 <thead className="text-md text-gray-700 uppercase text-center">
                                     <tr>
-                                        <th scope="col" className="px-4 py-4">Customer Name</th>
-                                        <th scope="col" className="px-4 py-3">Email</th>
-                                        <th scope="col" className="px-4 py-3">Room Type</th>
+                                        <th scope="col" className="px-4 py-4">Room Type</th>
+                                        <th scope="col" className="px-4 py-3">People Number</th>
+                                        <th scope="col" className="px-4 py-3">Rooms Number</th>
                                         <th scope="col" className="px-4 py-3">Price</th>
-                                        <th scope="col" className="px-4 py-3">Days Number</th>
+                                        <th scope="col" className="px-4 py-3">Status</th>
                                         <th scope="col" className="px-4 py-3">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="border-b text-center">
-                                        <td className="px-4 py-3">John Doe</td>
-                                        <td className="px-4 py-3">john.doe@example.com</td>
-                                        <td className="px-4 py-3">Deluxe Suite</td>
-                                        <td className="px-4 py-3">$200</td>
-                                        <td className="px-4 py-3">3</td>
-                                        <td className="px-4 py-3 flex items-center justify-center space-x-2">
-                                            <button
-                                                className="inline-flex items-center justify-center w-10 text-md font-medium hover:bg-green-100 border p-2 text-green-800 hover:text-gray-800 rounded-lg"
-                                                type="button"
-                                                onClick={openEdit}
-                                                ref={(el) => (dropdownRefs.current[1] = el)}
-                                            >
-                                                <PencilSimple size={20} weight="bold" />
-                                            </button>
-                                            <button
-                                                className="inline-flex items-center justify-center w-10 text-md font-medium hover:bg-green-100 border p-2 text-green-800 hover:text-gray-800 rounded-lg"
-                                                type="button"
-                                                onClick={openPreview}
-                                                ref={(el) => (dropdownRefs.current[1] = el)}
-                                            >
-                                                <Eye size={20} weight="bold" />
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    {roomsData.map((room) => (
+                                        <tr key={room.id} className="border-b text-center">
+                                            <td className="px-4 py-3">{room.type}</td>
+                                            <td className="px-4 py-3">{room.people}</td>
+                                            <td className="px-4 py-3">{room.rooms}</td>
+                                            <td className="px-4 py-3">{room.price}</td>
+                                            <td className="px-4 py-3">
+                                                <button
+                                                    className={`py-1 px-3 rounded-lg ${room.status === "Available" ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}
+                                                    onClick={() => toggleStatus(room.id)}
+                                                >
+                                                    {room.status}
+                                                </button>
+                                            </td>
+                                            <td className="px-4 py-3 flex items-center justify-center space-x-2">
+                                                <button
+                                                    className="inline-flex items-center justify-center w-10 text-md font-medium hover:bg-green-100 border p-2 text-green-800 hover:text-gray-800 rounded-lg"
+                                                    type="button"
+                                                    onClick={openEdit}
+                                                    ref={(el) => (dropdownRefs.current[room.id] = el)}
+                                                >
+                                                    <PencilSimple size={20} weight="bold" />
+                                                </button>
+                                                <button
+                                                    className="inline-flex items-center justify-center w-10 text-md font-medium hover:bg-green-100 border p-2 text-green-800 hover:text-gray-800 rounded-lg"
+                                                    type="button"
+                                                    onClick={openPreview}
+                                                    ref={(el) => (dropdownRefs.current[room.id] = el)}
+                                                >
+                                                    <Eye size={20} weight="bold" />
+                                                </button>
+                                                <button
+                                                    className="inline-flex items-center justify-center w-10 text-md font-medium hover:bg-red-100 border p-2 text-red-800 hover:text-gray-800 rounded-lg"
+                                                    type="button"
+                                                    onClick={() => handleDelete(room.id)}
+                                                >
+                                                    <Trash size={20} weight="bold" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
-                        <div className="flex justify-end items-center p-4 gap-4">
-                            <button
-                                onClick={() => paginate(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className="flex items-center gap-2 text-gray-500"
-                            >
-                                <CaretLeft size={18} weight="bold" />
-                            </button>
-                            <div className="space-x-2">
-                                {currentSet.map((page) => (
+                        <div className="flex flex-col sm:flex-row items-center justify-between p-4">
+                             <div className="flex items-center space-x-3 mt-2 sm:mt-0">
+                                <button
+                                    onClick={() => paginate(currentPage - 1)}
+                                    className="inline-flex items-center justify-center w-8 h-8 leading-5 text-gray-500 bg-white border rounded-lg hover:bg-gray-100"
+                                >
+                                    <CaretLeft size={20} weight="bold" />
+                                </button>
+                                {currentSet.map(pageNumber => (
                                     <button
-                                        key={page}
-                                        onClick={() => paginate(page)}
-                                        className={`px-4 py-2 text-sm rounded-md ${page === currentPage ? "bg-green-500 text-white" : "bg-gray-100 text-gray-500"}`}
+                                        key={pageNumber}
+                                        onClick={() => paginate(pageNumber)}
+                                        className={`inline-flex items-center justify-center w-8 h-8 leading-5 ${pageNumber === currentPage ? "text-blue-600 bg-blue-100" : "text-gray-500 bg-white"} border rounded-lg hover:bg-gray-100`}
                                     >
-                                        {page}
+                                        {pageNumber}
                                     </button>
                                 ))}
+                                <button
+                                    onClick={() => paginate(currentPage + 1)}
+                                    className="inline-flex items-center justify-center w-8 h-8 leading-5 text-gray-500 bg-white border rounded-lg hover:bg-gray-100"
+                                >
+                                    <CaretRight size={20} weight="bold" />
+                                </button>
                             </div>
-                            <button
-                                onClick={() => paginate(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className="flex items-center gap-2 text-gray-500"
-                            >
-                                <CaretRight size={18} weight="bold" />
-                            </button>
                         </div>
                     </div>
                 </div>

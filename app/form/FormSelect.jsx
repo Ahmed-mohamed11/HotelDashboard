@@ -20,7 +20,7 @@
 
 import React from "react";
   
-function FormSelect({ selectLabel, handleChange, options, value, name }) {
+function FormSelect({ selectLabel, handleChange, options, value, name, readOnly }) {
  
   return (
     <div>
@@ -34,6 +34,7 @@ function FormSelect({ selectLabel, handleChange, options, value, name }) {
       <select
         onChange={handleChange}
         id={selectLabel}
+        readOnly={readOnly}
         name={name}
         className="w-full p-2.5 dark:bg-gray-50 rounded-md
         dark:border-gray-600 dark:placeholder-gray-400

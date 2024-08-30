@@ -1,23 +1,27 @@
 'use client';
-import React, { useEffect, useMemo } from 'react';
-import { FaHandshake } from 'react-icons/fa';
+
+import React, { useEffect, useState, useCallback } from 'react';
+import { FaBell, FaHandshake, FaStar } from 'react-icons/fa';
 import gsap from 'gsap';
-import Dashboard from '../dashboard/page';
-import Image from 'next/image';
-import Charts from './Charts';
-import { Inter } from 'next/font/google';
-import arrow from '../images/arrow.svg';
+ import { Inter } from 'next/font/google';
+
+import ReactApexChart from 'react-apexcharts';
+import HotelTable from './HotelTable';
+import AddHotel from './AddHotel';
+import PreviewHotel from './PreviewHotel';
 
 const inter = Inter({ subsets: ['latin'], weight: ['400', '600'] });
 
-const cardData = [
-    { title: 'Total Users', value: '5,543', unit: 'Users', percent: '10.0%', color: 'green-700', bgColor: 'green-100' },
-    { title: 'Total Hotel', value: '5,543', unit: 'Hotel', percent: '22.2%', color: 'green-700', bgColor: 'green-100' },
-    { title: 'Total Rooms', value: '543', unit: 'Rooms', percent: '12.0%', color: 'green-700', bgColor: 'green-100' },
-    { title: 'Total Requests', value: '43', unit: 'Requests', percent: '7.0%', color: 'red-700', bgColor: 'red-100' }
-];
+const Hotels = ({ role }) => {
+    const [openCreate, setOpenCreate] = useState(false);
+    const [openPreview, setOpenPreview] = useState(false);
+    const toggleOpenPreviewModal = useCallback(() => {
+        setOpenPreview(prev => !prev);
+    }, []);
+    const toggleOpenCreateModal = useCallback(() => {
+        setOpenCreate(prev => !prev);
+    }, []);
 
-const Hotels = () => {
     useEffect(() => {
         const ctx = gsap.context(() => {
             gsap.fromTo(".greeting", { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1 });
@@ -27,38 +31,226 @@ const Hotels = () => {
         return () => ctx.revert();
     }, []);
 
-    const renderedCards = useMemo(() => cardData.map((card, index) => (
-        <div key={index} className="card1 bg-white flex justify-between items-center rounded-lg p-4 shadow-md">
-            <div>
-                <div className='flex justify-between items-center gap-3 font-mono'>
-                    {card.title}
-                    <span className={`text-${card.color} flex justify-between items-center gap-2 bg-${card.bgColor} px-2 rounded-full`}>
-                        <Image width={20} height={20} src={arrow} alt="arrow" />
-                        {card.percent}
-                    </span>
-                </div>
-                <h3 className='font-bold font-sans'>{card.value}</h3>
-                <p className='text-gray-400'>{card.unit}</p>
-            </div>
-        </div>
-    )), []);
+    const hotelChartOptions = {
+        chart: {
+            id: "hotel-insights",
+            type: 'area',
+            animations: {
+                enabled: true,
+                easing: 'easeinout',
+                speed: 800,
+                animateGradually: {
+                    enabled: true,
+                    delay: 150
+                },
+            },
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 2,
+        },
+        xaxis: {
+            categories: [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            title: {
+                text: "Month",
+            },
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 90, 100]
+            }
+        },
+        colors: ['#008FFB'],
+    };
+
+    const hotelSeries = [
+        {
+            name: "Hotel",
+            data: [30, 40, 35, 50, 49, 60, 70, 91, 125, 145, 160, 175],
+        },
+    ];
+
+    const newHotelChartOptions = {
+        chart: {
+            id: "new-hotel-insights",
+            type: 'area',
+            animations: {
+                enabled: true,
+                easing: 'easeinout',
+                speed: 800,
+                animateGradually: {
+                    enabled: true,
+                    delay: 150
+                },
+            },
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 2,
+        },
+        xaxis: {
+            categories: [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            title: {
+                text: "Month",
+            },
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 90, 100]
+            }
+        },
+        colors: ['#00E396'],
+    };
+
+    const newHotelSeries = [
+        {
+            name: "New Hotel",
+            data: [20, 30, 25, 40, 45, 50, 55, 65, 80, 95, 105, 115],
+        },
+    ];
+
+    const topRatedHotels = [
+        { name: "Hotel A", count: 120, rating: 5 },
+        { name: "Hotel B", count: 90, rating: 4.5 },
+        { name: "Hotel C", count: 75, rating: 4 },
+        { name: "Hotel D", count: 60, rating: 3.5 },
+    ];
+
+    const getRatingColor = (rating) => {
+        if (rating >= 4.5) return "bg-green-500 text-white";
+        if (rating >= 4) return "bg-yellow-400 text-black";
+        if (rating >= 3.5) return "bg-orange-400 text-white";
+        return "bg-red-500 text-white";
+    };
+
+    const getPercentageWidth = (count) => {
+        const maxCount = Math.max(...topRatedHotels.map(hotel => hotel.count));
+        return (count / maxCount) * 100;
+    };
 
     return (
         <div className={`flex justify-between font-sans ${inter.className}`}>
-            <Dashboard />
-            <div className='w-[78vw] relative right-10'>
-                <h3 className='greeting flex items-center gap-3 my-4 fw-bold font-sans'>
-                    Hello sir <FaHandshake size={32} />
-                </h3>
-                <div className="animate-context">
-                    <div className="grid grid-cols-4 gap-1 font-sans">
-                        {renderedCards}
+             
+            <div className='flex font-sans flex-col w-full'>
+                <div  >
+                    <div className="animate-context">
+                        <div className="flex justify-between items-center bg-white p-4">
+                            <h3 className="flex items-center gap-3 font-bold font-sans greeting">
+                                Hotels <FaHandshake size={32} />
+                            </h3>
+                            <form className="flex items-center gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    className="border-gray-300 p-2 border rounded-lg"
+                                />
+                                <button
+                                    type="button"
+                                    className="p-2 rounded-lg text-yellow-400"
+                                    onClick={toggleOpenCreateModal}
+                                >
+                                    <FaBell size={24} />
+                                </button>
+                            </form>
+                        </div>
+                        <div className="flex flex-wrap md:flex-nowrap gap-2 my-5">
+                            <div className=" flex justify-center items-center">
+                                <div className="bg-white shadow-md p-3 rounded-2xl w-full">
+                                    <h3 className="mb-4 font-bold text-lg font-sans">Hotel</h3>
+                                    <ReactApexChart
+                                        options={hotelChartOptions}
+                                        series={hotelSeries}
+                                        type="area"
+                                        height={200}
+                                        width={400}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="  flex justify-center items-center">
+                                <div className="bg-white shadow-md p-3 rounded-2xl w-full">
+                                    <h3 className="mb-4 font-bold text-lg font-sans">New Hotel</h3>
+                                    <ReactApexChart
+                                        options={newHotelChartOptions}
+                                        series={newHotelSeries}
+                                        type="area"
+                                        height={200}
+                                        width={400}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="  flex flex-col justify-center items-start bg-white shadow-md px-3 pt-1 rounded-2xl ">
+                                <h3 className="  font-bold text-lg font-sans">Top Rated Hotels</h3>
+
+                                <ul className="">
+                                    {topRatedHotels.map((hotel, index) => (
+                                        <li
+                                            key={index}
+                                            className="relative flex items-center p-2 mb-3 rounded-lg bg-gray-100"
+                                        >
+                                            <div className=" flex items-center">
+                                                <span className="font-bold">{index + 1}.</span>
+                                                <span className="ml-3 font-semibold">{hotel.name}</span>
+                                            </div>
+                                            <div className="  flex items-center justify-between relative">
+                                                <div
+                                                    className="absolute inset-0 rounded-lg"
+                                                    style={{
+                                                        width: `${getPercentageWidth(hotel.count)}%`,
+                                                        backgroundColor: getRatingColor(hotel.rating),
+                                                        opacity: 0.3,
+                                                    }}
+                                                ></div>
+                                                <div className="relative z-10 flex items-center w-full justify-end">
+                                                    {[...Array(5)].map((_, starIndex) => (
+                                                        <FaStar
+                                                            key={starIndex}
+                                                            className={`ml-1 ${hotel.rating >= starIndex + 1
+                                                                ? "text-yellow-400"
+                                                                : "text-gray-300"
+                                                                }`}
+                                                        />
+                                                    ))}
+                                                    <span className="ml-2 font-bold">{hotel.rating} ★</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <Charts />
+                <HotelTable openPreview={toggleOpenPreviewModal}
+                    openCreate={toggleOpenCreateModal} />
+                <AddHotel
+                    closeModal={toggleOpenCreateModal}
+                    modal={openCreate}
+                    role={role}
+                />
+                {openPreview && (
+                    <PreviewHotel
+                        closeModal={() => setOpenPreview(false)}
+                    />
+                )}
             </div>
         </div>
     );
 };
 
-export default React.memo(Hotels) ;
+export default React.memo(Hotels);

@@ -1,6 +1,6 @@
 import React from "react";
 
-function FormPassword({ label, name, value, placeholder, required, onChange }) {
+function FormPassword({ label, name, value, placeholder, required, onChange, readOnly }) {
   return (
     <div>
       <label
@@ -11,6 +11,7 @@ function FormPassword({ label, name, value, placeholder, required, onChange }) {
       </label>
       <input
         type="password"
+        readOnly={readOnly}
         name={name}
         id={name}
         defaultValue={value}

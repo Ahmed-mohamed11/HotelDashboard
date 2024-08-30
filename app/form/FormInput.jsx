@@ -9,6 +9,7 @@ function FormInput({
   onChange,
   numberOnly,
   maxLength,
+  readOnly
 }) {
   const handleChange = (e) => {
     if (numberOnly) {
@@ -30,6 +31,7 @@ function FormInput({
       </label>
       <input
         type={type}
+        readOnly={readOnly}
         name={name}
         id={name}
         defaultValue={value}

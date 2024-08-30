@@ -1,6 +1,7 @@
 import { Tajawal } from "next/font/google";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Dashboard from "./dashboard/page";
 
 const tajawal = Tajawal({
   subsets: ["arabic"],
@@ -15,7 +16,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={tajawal.className}>{children}</body>
+      <body className={`${tajawal.className} flex justify-between font-sans`}>
+        <Dashboard />
+        {children}
+      </body>
     </html>
   );
 }

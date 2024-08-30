@@ -1,6 +1,6 @@
 import React from "react";
 
-function FormText({ label, name, value, placeholder, required, onChange }) {
+function FormText({ label, name, value, placeholder, required, onChange, readOnly }) {
   return (
     <div>
       <label
@@ -13,6 +13,7 @@ function FormText({ label, name, value, placeholder, required, onChange }) {
         type="text"
         name={name}
         id={name}
+        readOnly={readOnly}
         defaultValue={value}
         className="bg-gray-50 border border-gray-300
                             text-sm rounded-md

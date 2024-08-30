@@ -1,11 +1,11 @@
+// RequestTable Component
 'use client';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { CaretLeft, CaretRight, Eye, Plus, MagnifyingGlass } from '@phosphor-icons/react';
+import { CaretLeft, CaretRight, Eye, Plus, MagnifyingGlass, Trash } from '@phosphor-icons/react';
 
 // Memoized Pagination Controls
 const PaginationControls = ({ currentPage, totalPages, paginate }) => (
     <div className="flex justify-end items-center p-4 gap-4">
-        {/* Conditionally render based on screen size */}
         <button
             onClick={() => paginate(currentPage - 1)}
             disabled={currentPage === 1}
@@ -13,7 +13,6 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
         >
             <CaretLeft size={18} weight="bold" />
         </button>
-        {/* Only show pagination numbers on medium and larger screens */}
         <div className="space-x-2 hidden md:block">
             {Array.from({ length: Math.min(6, totalPages) }, (_, i) => {
                 const page = Math.floor((currentPage - 1) / 6) * 6 + i + 1;
@@ -22,7 +21,10 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
                         <button
                             key={page}
                             onClick={() => paginate(page)}
-                            className={`px-4 py-2 text-sm rounded-md ${page === currentPage ? "bg-green-500 text-white" : "bg-gray-100 text-gray-500"}`}
+                            className={`px-4 py-2 text-sm rounded-md ${page === currentPage
+                                ? 'bg-green-500 text-white'
+                                : 'bg-gray-100 text-gray-500'
+                                }`}
                         >
                             {page}
                         </button>
@@ -40,11 +42,11 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
     </div>
 );
 
-const RequestTable = ({ openCreate }) => {
+const HotelTable = ({ openCreate, openPreview }) => {
     const dropdownRefs = useRef({});
     const [selectedHotelId, setSelectedHotelId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState('');
 
     const itemsPerPage = 10;
     const totalPages = 10;
@@ -54,25 +56,36 @@ const RequestTable = ({ openCreate }) => {
             return Array.from({ length: totalPages }, (_, i) => i + 1);
         }
         const startPage = Math.floor((currentPage - 1) / 6) * 6 + 1;
-        return Array.from({ length: 6 }, (_, i) => startPage + i).filter(page => page <= totalPages);
+        return Array.from({ length: 6 }, (_, i) => startPage + i).filter(
+            (page) => page <= totalPages
+        );
     }, [currentPage, totalPages]);
 
-    const handleClickOutside = useCallback((event) => {
-        if (selectedHotelId !== null) {
-            const dropdown = dropdownRefs.current[selectedHotelId];
-            if (dropdown && !dropdown.contains(event.target) && !event.target.classList.contains("view-button")) {
-                setSelectedHotelId(null);
+    const handleClickOutside = useCallback(
+        (event) => {
+            if (selectedHotelId !== null) {
+                const dropdown = dropdownRefs.current[selectedHotelId];
+                if (
+                    dropdown &&
+                    !dropdown.contains(event.target) &&
+                    !event.target.classList.contains('view-button')
+                ) {
+                    setSelectedHotelId(null);
+                }
             }
-        }
-    }, [selectedHotelId]);
+        },
+        [selectedHotelId]
+    );
 
     useEffect(() => {
-        document.addEventListener("click", handleClickOutside);
-        return () => document.removeEventListener("click", handleClickOutside);
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
     }, [handleClickOutside]);
 
     const toggleEditDropdown = useCallback((hotelId) => {
-        setSelectedHotelId((prevHotelId) => (prevHotelId === hotelId ? null : hotelId));
+        setSelectedHotelId((prevHotelId) =>
+            prevHotelId === hotelId ? null : hotelId
+        );
     }, []);
 
     const handleSearchChange = useCallback((event) => {
@@ -83,21 +96,29 @@ const RequestTable = ({ openCreate }) => {
         setCurrentPage(pageNumber);
     }, []);
 
+    const handleDelete = (hotelId) => {
+        // Add your deletion logic here, such as calling an API to delete the hotel.
+        console.log('Deleting hotel with ID:', hotelId);
+    };
+
     return (
         <div className="font-sans">
             <section className="p-0 my-4 sm:p-5">
                 <div className="mx-auto max-w-screen-xl">
                     <div className="bg-white relative shadow-md rounded-lg">
                         <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
-                            {/* Hide "All Hotels" on small screens */}
                             <div className="w-full md:w-1/2 hidden md:block">
-                                <h4>All Hotels</h4>
+                                <h4 className="fw-bold font-sans">All Hotels</h4>
                             </div>
                             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
                                 <form className="flex items-center justify-between w-full md:w-auto">
                                     <div className="relative w-full">
                                         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                            <MagnifyingGlass size={20} weight="bold" className="mx-1 text-gray-500" />
+                                            <MagnifyingGlass
+                                                size={20}
+                                                weight="bold"
+                                                className="mx-1 text-gray-500"
+                                            />
                                         </div>
                                         <input
                                             type="text"
@@ -110,7 +131,9 @@ const RequestTable = ({ openCreate }) => {
                                     </div>
                                 </form>
                                 <select className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-auto p-1">
-                                    <option value="" disabled>Sort by: Newest</option>
+                                    <option value="" disabled>
+                                        Sort by: Newest
+                                    </option>
                                     <option value="City 1">City 1</option>
                                     <option value="City 2">City 2</option>
                                     <option value="City 3">City 3</option>
@@ -118,10 +141,10 @@ const RequestTable = ({ openCreate }) => {
                                 <button
                                     onClick={openCreate}
                                     type="button"
-                                    className="flex gap-2 w-full md:w-auto items-center justify-center duration-150 ease-linear text-white hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 bg-green-700"
+                                    className="flex gap-2 w-full md:w-auto fw-bold font-sans items-center justify-center duration-150 ease-linear text-white hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 bg-green-700"
                                 >
                                     <Plus size={18} weight="bold" />
-                                    Add New
+                                    Add Hotel
                                 </button>
                             </div>
                         </div>
@@ -129,35 +152,75 @@ const RequestTable = ({ openCreate }) => {
                             <table className="w-full text-sm text-left text-gray-500">
                                 <thead className="text-md text-gray-700 uppercase text-center">
                                     <tr>
-                                        <th scope="col" className="px-4 py-4">Hotel Name</th>
-                                        <th scope="col" className="px-4 py-3">Phone Number</th>
-                                        <th scope="col" className="px-4 py-3">Hotel Email</th>
-                                        <th scope="col" className="px-4 py-3">City</th>
-                                        <th scope="col" className="px-4 py-3">Actions</th>
+                                        <th scope="col" className="px-4 py-4">
+                                            Hotel Name
+                                        </th>
+                                        <th scope="col" className="px-4 py-3">
+                                            Phone Number
+                                        </th>
+                                        <th scope="col" className="px-4 py-3">
+                                            Phone Number
+                                        </th>
+                                        <th scope="col" className="px-4 py-3">
+                                            Hotel Email
+                                        </th>
+                                        <th scope="col" className="px-4 py-3">
+                                            City
+                                        </th>
+                                        <th scope="col" className="px-4 py-3">
+                                            Actions
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr className="border-b text-center">
-                                        <td className="px-4 py-3">Hotel California</td>
-                                        <td className="px-4 py-3">+1 234 567 890</td>
-                                        <td className="px-4 py-3">info@hotelcalifornia.com</td>
-                                        <td className="px-4 py-3">Los Angeles</td>
-                                        <td className="px-4 py-3 flex items-center justify-center">
+                                        <td className="px-4 py-3">
+                                            Hotel California
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            +1 234 567 890
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            +1 234 567 890
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            info@hotelcalifornia.com
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            Los Angeles
+                                        </td>
+                                        <td className="px-4 py-3 flex items-center justify-center gap-2">
+                                            <button
+                                                className="inline-flex items-center justify-evenly w-20 text-md font-medium hover:bg-red-100 border p-2 text-red-800 hover:text-gray-800 rounded-lg delete-button"
+                                                type="button"
+                                            >
+                                                <Trash
+                                                    size={20}
+                                                    weight="bold"
+                                                />
+                                                ban
+                                            </button>
                                             <button
                                                 className="inline-flex items-center justify-evenly w-20 text-md font-medium hover:bg-green-100 border p-2 text-green-800 hover:text-gray-800 rounded-lg view-button"
                                                 type="button"
-                                                onClick={() => toggleEditDropdown(1)}
-                                                ref={(el) => (dropdownRefs.current[1] = el)}
+                                                onClick={openPreview}
+                                                ref={(el) =>
+                                                (dropdownRefs.current[1] =
+                                                    el)
+                                                }
                                             >
-                                                <Eye size={20} weight="bold" />
+                                                <Eye
+                                                    size={20}
+                                                    weight="bold"
+                                                />
                                                 View
                                             </button>
+                                          
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        {/* Hide pagination numbers on small screens and show arrows only */}
                         <PaginationControls
                             currentPage={currentPage}
                             totalPages={totalPages}
@@ -170,4 +233,5 @@ const RequestTable = ({ openCreate }) => {
     );
 };
 
-export default RequestTable;
+export default HotelTable;
+

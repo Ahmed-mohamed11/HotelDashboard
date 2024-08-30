@@ -8,18 +8,23 @@ import FormEmail from "../form/FormEmail";
 import FormSelect from "../form/FormSelect";
 import FormInput from "../form/FormInput";
 import debounce from 'lodash.debounce';
- 
-export default function AddBooking({ closeModal, modal }) {
+import { Badge, Button, Input, Label } from "reactstrap";
+
+export default function PreviewHotel({ closeModal }) {
     const [formData, setFormData] = useState({
-        customerName: "",
-        roomType: "",
-        country: "",
-        mobileNumber: "",
-        email: "",
-        hotelName: "",
+        customerName: "name",
+        roomNumber: "50",
+        customerID: "1",
+        roomType: "observed",
+        country: "Egypt",
+        mobileNumber: "01032210349",
+        email: "info@gmail.com",
+        hotelName: "kiloPatra",
         checkIn: "17/4/2002",
         checkOut: "18/4/2002"
     });
+
+
 
     const handleChange = useCallback(debounce((e) => {
         const { name, value } = e.target;
@@ -38,15 +43,15 @@ export default function AddBooking({ closeModal, modal }) {
     return (
         <div
             onClick={handleBackgroundClick}
-            className={`fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center ${modal ? "visible" : "invisible"}`}
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center"
         >
             <div
-                className={`CreateBooking font-sans fw-bold w-full bg-white rounded-lg shadow-lg fixed top-0 right-0 h-full ${modal ? "translate-x-0" : "translate-x-full"} transition-transform duration-300 ease-in-out`}
+                className="CreateBooking font-sans fw-bold w-full bg-white rounded-lg shadow-lg fixed top-0 right-0 h-full transition-transform duration-300 ease-in-out"
                 style={{ width: '40vw', zIndex: 50 }}
             >
                 <div className="relative text-gray-900">
                     <div className="bg-green-700 w-full flex justify-between items-center text-white p-3 mb-4 rounded-t-lg border-b">
-                        <h3 className="text-lg font-semibold">Add Booking</h3>
+                        <h3 className="text-lg font-semibold">Hotel Details</h3>
                         <button
                             type="button"
                             onClick={closeModal}
@@ -65,8 +70,7 @@ export default function AddBooking({ closeModal, modal }) {
                                         name="customerName"
                                         value={formData.customerName}
                                         placeholder="Enter Customer Name"
-                                        required
-                                        onChange={handleChange}
+                                        readOnly
                                     />
                                 </div>
                                 <div className="w-1/2">
@@ -76,7 +80,7 @@ export default function AddBooking({ closeModal, modal }) {
                                         value={formData.roomType}
                                         placeholder="Enter Room Type"
                                         required
-                                        onChange={handleChange}
+                                        readOnly
                                     />
                                 </div>
                             </div>
@@ -88,7 +92,7 @@ export default function AddBooking({ closeModal, modal }) {
                                         value={formData.country}
                                         placeholder="Enter Country"
                                         required
-                                        onChange={handleChange}
+                                        readOnly
                                     />
                                 </div>
                                 <div className="w-1/2">
@@ -98,7 +102,7 @@ export default function AddBooking({ closeModal, modal }) {
                                         value={formData.mobileNumber}
                                         placeholder="+966 0123456789"
                                         required
-                                        onChange={handleChange}
+                                        readOnly
                                     />
                                 </div>
                             </div>
@@ -109,7 +113,7 @@ export default function AddBooking({ closeModal, modal }) {
                                         name="email"
                                         value={formData.email}
                                         placeholder="Enter Email Address"
-                                        onChange={handleChange}
+                                        readOnly
                                     />
                                 </div>
                                 <div className="w-1/2">
@@ -123,6 +127,7 @@ export default function AddBooking({ closeModal, modal }) {
                                             { value: "hotel3", label: "Hotel 3" },
                                         ]}
                                         handleChange={handleChange}
+                                        readOnly
                                     />
                                 </div>
                             </div>
@@ -133,27 +138,88 @@ export default function AddBooking({ closeModal, modal }) {
                                         name="checkIn"
                                         value={formData.checkIn}
                                         required
-                                        type={"date"}
-                                        onChange={handleChange}
+                                        type="date"
+                                        readOnly
                                     />
                                 </div>
                                 <div className="w-1/2">
                                     <FormInput
                                         label="Check Out"
                                         name="checkOut"
-                                        type={"date"}
+                                        type="date"
                                         value={formData.checkOut}
-                                        onChange={handleChange}
+                                        readOnly
                                     />
                                 </div>
                             </div>
                             <div className="flex justify-between items-center gap-3 my-3">
-                                <div className="w-full">
+                                <div className="w-1/2">
+                                    <FormText
+                                        label="Customer ID"
+                                        name="customerID"
+                                        value={formData.customerID}
+                                        placeholder="Enter Customer ID"
+                                        required
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="w-1/2">
+                                    <FormNumber
+                                        label="Room Number"
+                                        name="roomNumber"
+                                        value={formData.roomNumber}
+                                        placeholder="123456789"
+                                        required
+                                        readOnly
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex gap-4 items-center">
+                                <div className="space-y-2">
+                                    <Label>Features</Label>
+                                    <div className="flex space-x-1">
+                                        <Badge variant="default">WIFI</Badge>
+                                        <Badge variant="default">AC</Badge>
+                                        <Badge variant="default">Free breakfast</Badge>
+                                        <Badge variant="default">VIP</Badge>
+                                    </div>
+                                </div>
+                                <div className="w-1/3">
+                                    <Label htmlFor="adults">Adults</Label>
+                                    <div className="flex items-center">
+                                        <Button variant="outline">-</Button>
+                                        <Input id="adults" value="2" className="text-center" readOnly />
+                                        <Button variant="outline">+</Button>
+                                    </div>
+                                </div>
+                                <div className="w-1/3">
+                                    <Label htmlFor="children">Children</Label>
+                                    <div className="flex items-center">
+                                        <Button variant="outline">-</Button>
+                                        <Input id="children" value="2" className="text-center" readOnly />
+                                        <Button variant="outline">+</Button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div className="flex justify-center items-center gap-3 my-5">
+                                <div className="rounded-3xl bg-green-700">
                                     <FormBtnIcon
-                                        label="Save"
+                                        label="Approve"
                                         Icon={Plus}
                                         type="submit"
-                                        className="w-full mt-6 bg-green-700 text-white font-semibold py-2 px-4 rounded"
+                                        className="w-full mt-6 text-white font-bold py-2 px-4 rounded"
+                                    />
+                                </div>
+                                <div className="rounded-3xl bg-red-700">
+                                    <FormBtnIcon
+                                        label="Decline"
+                                        Icon={Plus}
+                                        type="submit"
+                                        className="w-full mt-6 text-white font-bold py-2 px-4 rounded"
+
                                     />
                                 </div>
                             </div>

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
 //
-function FormPic({ label, name, onChange, file }) {
+function FormPic({ label, name, onChange, file, readOnly }) {
   return (
     <div>
       <label
@@ -19,6 +19,7 @@ function FormPic({ label, name, onChange, file }) {
         name="file-upload"
         className="hidden"
         onChange={onChange}
+        readOnly={readOnly}
       />
       {file && (
         <div>

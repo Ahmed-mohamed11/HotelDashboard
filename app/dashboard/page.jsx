@@ -1,17 +1,23 @@
-import React, { useState, useMemo, useLayoutEffect } from 'react';
-import { FaHome, FaStore, FaSitemap } from 'react-icons/fa';
-import { FiChevronRight, FiMenu, FiX } from 'react-icons/fi'; // استيراد أيقونة X
+'use client';
+import React, { useState, useMemo, useEffect } from 'react';
+import { FaStore, FaSitemap, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FiMenu, FiX } from 'react-icons/fi';
 import { gsap } from 'gsap';
 import Link from 'next/link';
+import Image from 'next/image';
+import logo from '../images/Logo-green 1.svg';
 
 const routes = [
-    { path: '/requests', name: 'Requests', icon: <FaSitemap /> },
-    { path: '/hotels', name: 'Hotels', icon: <FaHome /> },
+    { path: '/', name: 'Dashboard', icon: <FaSitemap /> },
+    { path: '/bookings', name: 'New bookings', icon: <FaUser /> },
     { path: '/rooms', name: 'Rooms', icon: <FaStore /> },
+    { path: '/requests', name: 'requests', icon: <FaStore /> },
+    { path: '/hotels', name: 'hotels', icon: <FaStore /> },
+    { path: '/sign', name: 'Sign out', icon: <FaSignOutAlt /> },
 ];
 
 const Dashboard = ({ children }) => {
-    const [activeLink, setActiveLink] = useState(null);
+    const [activeLink, setActiveLink] = useState(0);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const memoizedRoutes = useMemo(() => routes, []);
@@ -19,62 +25,50 @@ const Dashboard = ({ children }) => {
     const handleLinkClick = (index) => {
         setActiveLink(index);
         if (window.innerWidth < 1024) {
-            setIsSidebarOpen(false); // إغلاق الشريط الجانبي تلقائيًا على الشاشات الصغيرة عند النقر على رابط
+            setIsSidebarOpen(false);
         }
     };
 
-    useLayoutEffect(() => {
-        gsap.fromTo(
-            '.aside-content',
-            { opacity: 0, y: -100 },
-            { opacity: 1, y: 0, duration: 1 }
-        );
-        gsap.fromTo(
-            '.content',
-            { opacity: 0, x: -100 },
-            { opacity: 1, x: 0, duration: 1, delay: 0.5 }
-        );
+    useEffect(() => {
+        const tl = gsap.timeline();
+        tl.fromTo('.aside-content', { opacity: 0, y: -100 }, { opacity: 1, y: 0, duration: 0.5 })
+            .fromTo('.content', { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 0.5 }, "-=0.2");
     }, []);
 
     return (
-        <div className="flex font-sans h-screen">
-            {/* Mobile Menu Button */}
+        <div className="flex h-screen font-sans">
             <button
-                className="lg:hidden fixed top-4 left-4 z-50 text-gray-600"
+                className="top-4 left-4 z-50 fixed lg:hidden text-gray-600"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
-                {isSidebarOpen ? <FiX size={28} className='relative left-48 gap-3  top-4 bg-green-300' /> : <FiMenu size={24} />} {/* تبديل الأيقونة */}
+                {isSidebarOpen ? <FiX size={28} className='relative top-4 left-48 gap-3 bg-green-300' /> : <FiMenu size={24} />}
             </button>
 
-            {/* Sidebar */}
-            <aside className={`fixed top-0 left-0 h-screen bg-white shadow-md shadow-gray-500 p-4 z-40 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out lg:w-64 md:w-60`}>
+            <aside className={`fixed top-0 left-0 h-screen bg-white shadow-md shadow-gray-500 p-4 z-40 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out lg:w-60 md:w-60`}>
                 <div>
-                    <h1 className="text-3xl aside-content flex justify-evenly font-bold mb-4 md:justify-start">
-                        <FaHome className='lg:block sm:hidden' /> Dashboard
-                    </h1>
+                    <div className="flex justify-evenly md:justify-start items-end my-3 font-bold text-3xl aside-content">
+                        <Image src={logo} alt='Logo' width={70} height={70} className='lg:block relative -top-5 sm:hidden shadow-gray-200 shadow-md rounded-full' />
+                        <span className='text-[#151D48] text-5xl'>Zayer</span>
+                    </div>
                     <nav>
                         {memoizedRoutes.map((item, index) => (
                             <Link
                                 key={item.path}
                                 href={item.path}
-                                className={`content font-sans text-lg text-gray-600 tracking-wider flex items-center w-full px-3 py-2 mb-2 rounded-md ${activeLink === index
+                                className={`content font-sans text-lg text-gray-600 tracking-wider flex items-center w-full px-3 py-2 mb-3 rounded-md ${activeLink === index
                                     ? 'bg-green-500 text-white'
                                     : 'hover:bg-green-500 hover:text-white'
                                     } relative no-underline`}
                                 onClick={() => handleLinkClick(index)}
                             >
-                                <span className="text-xl mr-2">{item.icon}</span>
+                                <span className="mr-2 text-xl">{item.icon}</span>
                                 {item.name}
-                                <span className="text-xl absolute right-5 lg:right-10">{/* تعديل المسافة بين السهم والنص */}
-                                    <FiChevronRight />
-                                </span>
                             </Link>
                         ))}
                     </nav>
                 </div>
             </aside>
 
-            {/* Main Content */}
             <main className="flex-1 ml-0 lg:ml-64 p-4 transition-all duration-300 ease-in-out">
                 {children}
             </main>

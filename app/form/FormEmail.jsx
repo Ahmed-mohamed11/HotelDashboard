@@ -29,7 +29,7 @@
 // FormEmail.jsx
 import React from "react";
 
-const FormEmail = ({ label, name, value, placeholder, required, onChange }) => {
+const FormEmail = ({ label, name, value, placeholder, required, onChange, readOnly }) => {
   return (
     <div>
       <label
@@ -41,6 +41,7 @@ const FormEmail = ({ label, name, value, placeholder, required, onChange }) => {
       <input
         type="email"
         name={name}
+        readOnly={readOnly}
         id={name}
         defaultValue={value}
         className=" bg-gray-50 border border-gray-300

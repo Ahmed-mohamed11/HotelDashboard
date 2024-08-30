@@ -1,6 +1,6 @@
 import React from "react";
 //
-function FormPicProfile({ label, name, onChange, file }) {
+function FormPicProfile({ label, name, onChange, file, readOnly }) {
 
   const labelStyle = {
     backgroundImage: file ? `url(${URL.createObjectURL(file)})` : 'none',
@@ -24,6 +24,7 @@ function FormPicProfile({ label, name, onChange, file }) {
         name="file-upload"
         className="hidden"
         onChange={onChange}
+        readOnly={readOnly}
       />
       {/* {file && (
         <div>

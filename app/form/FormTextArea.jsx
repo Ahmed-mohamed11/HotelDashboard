@@ -1,6 +1,6 @@
 import React from "react";
 
-function FormTextArea({ label, name, value, placeholder, required, onChange }) {
+function FormTextArea({ label, name, value, placeholder, required, onChange, readOnly }) {
   return (
     <div>
       <label
@@ -12,6 +12,7 @@ function FormTextArea({ label, name, value, placeholder, required, onChange }) {
       <textarea
         name={name}
         id={name}
+        readOnly={readOnly}
         defaultValue={value}
         rows={5}
         className=" shadow-md rounded-2 border border-gray-300

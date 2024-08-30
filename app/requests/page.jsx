@@ -1,75 +1,256 @@
 'use client';
-import React, { useState, useEffect, memo } from 'react';
-import { FaHandshake } from 'react-icons/fa';
-import { LuUserCheck } from "react-icons/lu";
-import { AiOutlineUsergroupAdd } from "react-icons/ai";
-import { TbScreenShareOff } from "react-icons/tb";
-import RequestTable from './RequestTable';
+
+import React, { useEffect, useState, useCallback } from 'react';
+import { FaBell, FaHandshake, FaStar } from 'react-icons/fa';
 import gsap from 'gsap';
-import dynamic from 'next/dynamic'; // Lazy loading dynamic import
+ import { Inter } from 'next/font/google';
 
-// Lazy load Dashboard and AddHotel
-const Dashboard = dynamic(() => import('../dashboard/page'), { ssr: false });
-const AddHotel = dynamic(() => import('./AddHotel'), { ssr: false });
+import ReactApexChart from 'react-apexcharts';
+import HotelTable from './HotelTable';
+import AddHotel from './AddHotel';
+import PreviewHotel from './PreviewHotel';
 
-// Memoized Card component
-const Card = ({ icon: Icon, label, value, colorClass }) => (
-    <div className="card1 bg-white flex justify-between items-center rounded-lg p-3 shadow-md">
-        <div className={`bg-green-300 h-12 w-16 flex justify-center items-center rounded-full ${colorClass}`}>
-            <Icon size={32} className='text-green-900' />
-        </div>
-        <div>
-            <p className='text-gray-400'>{label}</p>
-            <h3 className='font-bold'>{value}</h3>
-        </div>
-    </div>
-);
+const inter = Inter({ subsets: ['latin'], weight: ['400', '600'] });
 
-const Requests = ({ role }) => {
+const Hotels = ({ role }) => {
     const [openCreate, setOpenCreate] = useState(false);
-
-    const toggleOpenCreateModal = () => {
+    const [openPreview, setOpenPreview] = useState(false);
+    const toggleOpenPreviewModal = useCallback(() => {
+        setOpenPreview(prev => !prev);
+    }, []);
+    const toggleOpenCreateModal = useCallback(() => {
         setOpenCreate(prev => !prev);
-    };
+    }, []);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            gsap.fromTo(".greeting",
-                { opacity: 0, y: -50 },
-                { opacity: 1, y: 0, duration: 1 }
-            );
-            gsap.fromTo(".card1",
-                { opacity: 0, y: 50 },
-                { opacity: 1, y: 0, duration: 1, stagger: 0.2 }
-            );
-        });
-        return () => ctx.revert(); // Cleanup GSAP animations on unmount
+            gsap.fromTo(".greeting", { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1 });
+            gsap.fromTo(".card1", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, stagger: 0.2 });
+        }, ".animate-context");
+
+        return () => ctx.revert();
     }, []);
 
+    const hotelChartOptions = {
+        chart: {
+            id: "hotel-insights",
+            type: 'area',
+            animations: {
+                enabled: true,
+                easing: 'easeinout',
+                speed: 800,
+                animateGradually: {
+                    enabled: true,
+                    delay: 150
+                },
+            },
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 2,
+        },
+        xaxis: {
+            categories: [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            title: {
+                text: "Month",
+            },
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 90, 100]
+            }
+        },
+        colors: ['#008FFB'],
+    };
+
+    const hotelSeries = [
+        {
+            name: "Hotel",
+            data: [30, 40, 35, 50, 49, 60, 70, 91, 125, 145, 160, 175],
+        },
+    ];
+
+    const newHotelChartOptions = {
+        chart: {
+            id: "new-hotel-insights",
+            type: 'area',
+            animations: {
+                enabled: true,
+                easing: 'easeinout',
+                speed: 800,
+                animateGradually: {
+                    enabled: true,
+                    delay: 150
+                },
+            },
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 2,
+        },
+        xaxis: {
+            categories: [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            title: {
+                text: "Month",
+            },
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 90, 100]
+            }
+        },
+        colors: ['#00E396'],
+    };
+
+    const newHotelSeries = [
+        {
+            name: "New Hotel",
+            data: [20, 30, 25, 40, 45, 50, 55, 65, 80, 95, 105, 115],
+        },
+    ];
+
+    const topRatedHotels = [
+        { name: "Hotel A", count: 120, rating: 5 },
+        { name: "Hotel B", count: 90, rating: 4.5 },
+        { name: "Hotel C", count: 75, rating: 4 },
+        { name: "Hotel D", count: 60, rating: 3.5 },
+    ];
+
+    const getRatingColor = (rating) => {
+        if (rating >= 4.5) return "bg-green-500 text-white";
+        if (rating >= 4) return "bg-yellow-400 text-black";
+        if (rating >= 3.5) return "bg-orange-400 text-white";
+        return "bg-red-500 text-white";
+    };
+
+    const getPercentageWidth = (count) => {
+        const maxCount = Math.max(...topRatedHotels.map(hotel => hotel.count));
+        return (count / maxCount) * 100;
+    };
+
     return (
-        <div className='flex justify-between'>
-            <Dashboard />
-            <div className='w-[78vw] relative right-10'>
-                <h3 className='greeting flex items-center gap-3 my-4 fw-bold font-sans sm:flex justify-center sm:items-center'>
-                    Hello sir <FaHandshake size={32} />
-                </h3>
-                <div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <Card icon={AiOutlineUsergroupAdd} label="Total Orders" value="5,543" />
-                        <Card icon={LuUserCheck} label="Total Approved Orders" value="1,543" />
-                        <Card icon={AiOutlineUsergroupAdd} label="Total Pending Orders" value="143" />
-                        <Card icon={TbScreenShareOff} label="Total Rejected Orders" value="543" />
+        <div className={`flex justify-between font-sans ${inter.className}`}>
+             
+            <div className='flex font-sans flex-col w-full'>
+                <div  >
+                    <div className="animate-context">
+                        <div className="flex justify-between items-center bg-white p-4">
+                            <h3 className="flex items-center gap-3 font-bold font-sans greeting">
+                                Hotels <FaHandshake size={32} />
+                            </h3>
+                            <form className="flex items-center gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    className="border-gray-300 p-2 border rounded-lg"
+                                />
+                                <button
+                                    type="button"
+                                    className="p-2 rounded-lg text-yellow-400"
+                                    onClick={toggleOpenCreateModal}
+                                >
+                                    <FaBell size={24} />
+                                </button>
+                            </form>
+                        </div>
+                        <div className="flex flex-wrap md:flex-nowrap gap-2 my-5">
+                            <div className=" flex justify-center items-center">
+                                <div className="bg-white shadow-md p-3 rounded-2xl w-full">
+                                    <h3 className="mb-4 font-bold text-lg font-sans">Hotel</h3>
+                                    <ReactApexChart
+                                        options={hotelChartOptions}
+                                        series={hotelSeries}
+                                        type="area"
+                                        height={200}
+                                        width={400}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="  flex justify-center items-center">
+                                <div className="bg-white shadow-md p-3 rounded-2xl w-full">
+                                    <h3 className="mb-4 font-bold text-lg font-sans">New Hotel</h3>
+                                    <ReactApexChart
+                                        options={newHotelChartOptions}
+                                        series={newHotelSeries}
+                                        type="area"
+                                        height={200}
+                                        width={400}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="  flex flex-col justify-center items-start bg-white shadow-md px-3 pt-1 rounded-2xl ">
+                                <h3 className="  font-bold text-lg font-sans">Top Rated Hotels</h3>
+
+                                <ul className="">
+                                    {topRatedHotels.map((hotel, index) => (
+                                        <li
+                                            key={index}
+                                            className="relative flex items-center p-2 mb-3 rounded-lg bg-gray-100"
+                                        >
+                                            <div className=" flex items-center">
+                                                <span className="font-bold">{index + 1}.</span>
+                                                <span className="ml-3 font-semibold">{hotel.name}</span>
+                                            </div>
+                                            <div className="  flex items-center justify-between relative">
+                                                <div
+                                                    className="absolute inset-0 rounded-lg"
+                                                    style={{
+                                                        width: `${getPercentageWidth(hotel.count)}%`,
+                                                        backgroundColor: getRatingColor(hotel.rating),
+                                                        opacity: 0.3,
+                                                    }}
+                                                ></div>
+                                                <div className="relative z-10 flex items-center w-full justify-end">
+                                                    {[...Array(5)].map((_, starIndex) => (
+                                                        <FaStar
+                                                            key={starIndex}
+                                                            className={`ml-1 ${hotel.rating >= starIndex + 1
+                                                                ? "text-yellow-400"
+                                                                : "text-gray-300"
+                                                                }`}
+                                                        />
+                                                    ))}
+                                                    <span className="ml-2 font-bold">{hotel.rating} ★</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <RequestTable openCreate={toggleOpenCreateModal} />
+                <HotelTable openPreview={toggleOpenPreviewModal}
+                    openCreate={toggleOpenCreateModal} />
                 <AddHotel
                     closeModal={toggleOpenCreateModal}
                     modal={openCreate}
                     role={role}
                 />
+                {openPreview && (
+                    <PreviewHotel
+                        closeModal={() => setOpenPreview(false)}
+                    />
+                )}
             </div>
         </div>
     );
-}
+};
 
-export default React.memo(Requests);
+export default React.memo(Hotels);

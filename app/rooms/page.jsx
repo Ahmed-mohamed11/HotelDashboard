@@ -1,29 +1,24 @@
 'use client';
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { FaHandshake } from 'react-icons/fa';
+
+import React, { useEffect, useState, useCallback } from 'react';
+import { FaBell, FaFileExport, FaHandshake } from 'react-icons/fa';
 import gsap from 'gsap';
-import Dashboard from '../dashboard/page';
-import Image from 'next/image';
-import { Inter } from 'next/font/google';
-import arrow from '../images/arrow.svg';
+ import { Inter } from 'next/font/google';
 import RoomTable from './RoomTable';
-import AddBooking from './AddBooking';
+import AddBooking from './AddRoom';
 import EditRoom from './EditRoom';
 import PreviewRoom from './PreviewRoom';
+import ReactApexChart from 'react-apexcharts';
+import { AiOutlineUsergroupAdd } from 'react-icons/ai';
+import { LuUserCheck } from 'react-icons/lu';
+import { TbScreenShareOff } from 'react-icons/tb';
 
 const inter = Inter({ subsets: ['latin'], weight: ['400', '600'] });
-
-const cardData = [
-    { title: 'Total Rooms', value: '5,543', unit: 'Rooms', percent: '10.0%', color: 'text-green-700', bgColor: 'bg-green-100' },
-    { title: 'Reserved Rooms', value: '5,543', unit: 'Hotel', percent: '22.2%', color: 'text-green-700', bgColor: 'bg-green-100' },
-    { title: 'Available Rooms', value: '543', unit: 'Rooms', percent: '12.0%', color: 'text-green-700', bgColor: 'bg-green-100' },
-    { title: 'Total Orders', value: '43', unit: 'Requests', percent: '7.0%', color: 'text-red-700', bgColor: 'bg-red-100' }
-];
 
 const Rooms = ({ role }) => {
     const [openCreate, setOpenCreate] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
-     const [openPreview, setOpenPreview] = useState(false);
+    const [openPreview, setOpenPreview] = useState(false);
 
     const toggleOpenCreateModal = useCallback(() => {
         setOpenCreate(prev => !prev);
@@ -44,55 +39,159 @@ const Rooms = ({ role }) => {
         return () => ctx.revert();
     }, []);
 
-    const renderedCards = useMemo(() => cardData.map((card, index) => (
-        <div key={index} className="card1 bg-white flex justify-between items-center rounded-lg p-4 shadow-md">
+    const Card = ({ icon: Icon, label, h1, value, colorClass, colorIcon }) => (
+        <div className={`card1 flex flex-col w-36 items-start rounded-lg ps-2 py-2 shadow-md ${colorClass}`}>
+            <div className={`h-8 w-8 my-3 flex justify-center items-center rounded-full ${colorIcon}`}>
+                <Icon size={20} className="text-white" />
+            </div>
             <div>
-                <div className='flex justify-between items-center gap-3 font-mono'>
-                    {card.title}
-                    <span className={`${card.color} flex justify-between items-center gap-2 ${card.bgColor} px-2 rounded-full`}>
-                        <Image width={20} height={20} src={arrow} alt="arrow" />
-                        {card.percent}
-                    </span>
-                </div>
-                <h3 className='font-bold font-sans'>{card.value}</h3>
-                <p className='text-gray-400'>{card.unit}</p>
+                <h3 className="font-bold text-red-500">{h1}</h3>
+                <p className="-my-1 font-bold font-sans text-gray-500">{label}</p>
+                <p className="font-bold font-sans text-sm">{value}</p>
             </div>
         </div>
-    )), []);
+    );
+
+    const chartOptions = {
+        chart: {
+            id: "visitor-insights"
+        },
+        xaxis: {
+            categories: [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            title: {
+                text: "Month",
+            },
+        },
+     
+    };
+
+    const series = [
+        {
+            name: "Empty Room",
+            data: [30, 40, 35, 50, 49, 60, 70, 91, 125, 145, 160, 175],
+        },
+        {
+            name: "Book Room",
+            data: [20, 30, 25, 40, 45, 50, 55, 65, 80, 95, 105, 115],
+        },
+     
+    ];
 
     return (
         <div className={`flex justify-between font-sans ${inter.className}`}>
-            <Dashboard />
-            <div className='w-[78vw] relative right-10'>
-                <h3 className='greeting flex items-center gap-3 my-4 fw-bold font-sans'>
-                    Hello sir <FaHandshake size={32} />
-                </h3>
-                <div className="animate-context">
-                    <div className="grid grid-cols-4 gap-1 font-sans">
-                        {renderedCards}
+
+            <div className='flex font-sans flex-col w-full'>
+                <div  >
+                    <div className="animate-context">
+                        <div className="flex justify-between items-center bg-white p-4">
+                            <h3 className="flex items-center gap-3 font-bold font-sans greeting">
+                                Hotels <FaHandshake size={32} />
+                            </h3>
+                            <form className="flex items-center gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    className="border-gray-300 p-2 border rounded-lg"
+                                />
+                                <button
+                                    type="button"
+                                    className="p-2 rounded-lg text-yellow-400"
+                                    onClick={toggleOpenCreateModal}
+                                >
+                                    <FaBell size={24} />
+                                </button>
+                            </form>
+                        </div>
+                        <div className="flex flex-wrap md:flex-nowrap gap-4 p-4">
+                            <div className="flex-1">
+                                <div className="bg-white shadow-md py-4 rounded-3xl w-[45vw] pe-5 ps-4">
+                                    <div className="flex justify-between">
+                                        <div>
+                                            <h3 className="fw-bold font-sans">Today’s Sales</h3>
+                                            <h4 className="fw-bold font-sans text-gray-400">Sales Summary</h4>
+                                        </div>
+                                        <button className="flex justify-around items-center gap-3 border-2 px-3 py-2 border-blue-300 rounded-3xl w-28 h-full">
+                                            <FaFileExport /> Export
+                                        </button>
+                                    </div>
+                                    <div className="gap-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+                                        <Card
+                                            icon={AiOutlineUsergroupAdd}
+                                            label="Total Sales"
+                                            h1="1k$"
+                                            value="+8% from yesterday"
+                                            colorClass="bg-red-100"
+                                            colorIcon="bg-[#FA5A7D]"
+                                        />
+                                        <Card
+                                            icon={LuUserCheck}
+                                            label="Total Booking"
+                                            h1="300$"
+                                            value="+5% from yesterday"
+                                            colorClass="bg-[#FFF4DE]"
+                                            colorIcon="bg-[#FF947A]"
+                                        />
+                                        <Card
+                                            icon={AiOutlineUsergroupAdd}
+                                            label="Cancel Booking"
+                                            h1="5$"
+                                            value="+3% from yesterday"
+                                            colorClass="bg-[#F8B5B5]"
+                                            colorIcon="bg-red-500"
+                                        />
+                                        <Card
+                                            icon={TbScreenShareOff}
+                                            label="New Booking"
+                                            h1="400$"
+                                            value="+2% from yesterday"
+                                            colorClass="bg-[#F3E8FF]"
+                                            colorIcon="bg-[#BF83FF]"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-1 justify-center items-center">
+                                <div className="bg-white shadow-md p-3 rounded-2xl ">
+                                    <h3 className="mb-4 font-bold text-lg font-sans">Reserved rooms / Empty rooms</h3>
+                                    <ReactApexChart
+                                        options={chartOptions}
+                                        series={series}
+                                        type="line"
+                                        height={200}
+                                        width={400}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <RoomTable
+                        openEdit={toggleOpenEditModal}
+                        openPreview={toggleOpenPreviewModal}
+                        openCreate={toggleOpenCreateModal}
+                    />
+                    <AddBooking
+                        closeModal={toggleOpenCreateModal}
+                        modal={openCreate}
+                        role={role}
+                    />
+                    <EditRoom
+                        closeModal={toggleOpenEditModal}
+                        modal={openEdit}
+                        role={role}
+                    />
+                    {openPreview && (
+                        <PreviewRoom
+                            closeModal={() => setOpenPreview(false)}
+                        />
+                    )}
                     </div>
                 </div>
-                <RoomTable openEdit={toggleOpenEditModal}
-                 openPreview={toggleOpenPreviewModal}
-                  openCreate={toggleOpenCreateModal} />
-                <AddBooking
-                    closeModal={toggleOpenCreateModal}
-                    modal={openCreate}
-                    role={role}
-                />
-                <EditRoom
-                    closeModal={toggleOpenEditModal}
-                    modal={openEdit}
-                    role={role}
-
-                />
-                {openPreview && (
-                    <PreviewRoom
-                        closeModal={() => setOpenPreview(false)}
-                     />
-                )}
+              
             </div>
-        </div>
+      
     );
 };
 
