@@ -374,7 +374,7 @@ const Main = ({ role }) => {
         </div>
         <div className="flex flex-col xl:flex-row lg:flex-row  items-center gap-4 w-full p-4">
           <div className="flex-1">
-            <div className="bg-white shadow-md py-4 rounded-3xl   xl:w-[42vw] lg:w-[33vw]  pe-5 ps-4">
+            <div className="bg-white shadow-md py-4 rounded-3xl   xl:w-[43vw] lg:w-[33vw]  pe-5 ps-4">
               <div className="flex justify-between">
                 <div>
                   <h3 className="fw-bold font-sans">Today’s Sales</h3>
