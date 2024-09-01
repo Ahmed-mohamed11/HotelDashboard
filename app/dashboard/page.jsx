@@ -36,7 +36,7 @@ const Dashboard = ({ children }) => {
     }, []);
 
     return (
-        <div className="flex h-screen font-sans">
+        <div className="  h-screen font-sans">
             <button
                 className="top-4 left-4 z-50 fixed lg:hidden text-gray-600"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}

@@ -88,7 +88,7 @@ const Rooms = ({ role }) => {
                     <div className="animate-context">
                         <div className="flex justify-between items-center bg-white p-4">
                             <h3 className="flex items-center gap-3 font-bold font-sans greeting">
-                                Hotels <FaHandshake size={32} />
+                                Rooms <FaHandshake size={32} />
                             </h3>
                             <form className="flex items-center gap-2">
                                 <input
@@ -105,19 +105,21 @@ const Rooms = ({ role }) => {
                                 </button>
                             </form>
                         </div>
-                        <div className="flex flex-wrap md:flex-nowrap gap-4 p-4">
+                        <div className="flex flex-col xl:flex-row lg:flex-row  items-center gap-4 w-full p-4">
                             <div className="flex-1">
-                                <div className="bg-white shadow-md py-4 rounded-3xl w-[45vw] pe-5 ps-4">
+                                <div className="bg-white shadow-md py-4 rounded-3xl   xl:w-[43.8vw] lg:w-[33vw]  pe-5 ps-4">
                                     <div className="flex justify-between">
                                         <div>
                                             <h3 className="fw-bold font-sans">Today’s Sales</h3>
-                                            <h4 className="fw-bold font-sans text-gray-400">Sales Summary</h4>
+                                            <h4 className="fw-bold font-sans text-gray-400">
+                                                Sales Summary
+                                            </h4>
                                         </div>
                                         <button className="flex justify-around items-center gap-3 border-2 px-3 py-2 border-blue-300 rounded-3xl w-28 h-full">
                                             <FaFileExport /> Export
                                         </button>
                                     </div>
-                                    <div className="gap-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+                                    <div className="gap-12 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
                                         <Card
                                             icon={AiOutlineUsergroupAdd}
                                             label="Total Sales"
@@ -153,17 +155,15 @@ const Rooms = ({ role }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex flex-1 justify-center items-center">
-                                <div className="bg-white shadow-md p-3 rounded-2xl ">
-                                    <h3 className="mb-4 font-bold text-lg font-sans">Reserved rooms / Empty rooms</h3>
-                                    <ReactApexChart
-                                        options={chartOptions}
-                                        series={series}
-                                        type="line"
-                                        height={200}
-                                        width={400}
-                                    />
-                                </div>
+                            <div className="bg-white shadow-md py-3 xl:px-5 lg:px-2 rounded-2xl w-[90vw] px-3 xl:w-[30vw] lg:w-[30vw] md:w-[80vw] md:px-8 ">
+                                <h3 className="mb-4 font-bold text-lg font-sans">Reserved rooms / Empty rooms</h3>
+                                <ReactApexChart
+                                    options={chartOptions}
+                                    series={series}
+                                    type="line"
+                                    height={200}
+                                 
+                                />
                             </div>
                         </div>
                     </div>

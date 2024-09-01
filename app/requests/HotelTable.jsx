@@ -97,8 +97,7 @@ const HotelTable = ({ openCreate, openPreview }) => {
     }, []);
 
     const handleDelete = (hotelId) => {
-        // Add your deletion logic here, such as calling an API to delete the hotel.
-        console.log('Deleting hotel with ID:', hotelId);
+         console.log('Deleting hotel with ID:', hotelId);
     };
 
     return (
@@ -108,7 +107,7 @@ const HotelTable = ({ openCreate, openPreview }) => {
                     <div className="bg-white relative shadow-md rounded-lg">
                         <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                             <div className="w-full md:w-1/2 hidden md:block">
-                                <h4 className="fw-bold font-sans">All Hotels</h4>
+                                <h4 className="fw-bold font-sans">Requests</h4>
                             </div>
                             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
                                 <form className="flex items-center justify-between w-full md:w-auto">
@@ -144,7 +143,7 @@ const HotelTable = ({ openCreate, openPreview }) => {
                                     className="flex gap-2 w-full md:w-auto fw-bold font-sans items-center justify-center duration-150 ease-linear text-white hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 bg-green-700"
                                 >
                                     <Plus size={18} weight="bold" />
-                                    Add Hotel
+                                    Add Booking
                                 </button>
                             </div>
                         </div>
