@@ -167,47 +167,46 @@ const Hotels = ({ role }) => {
                                 </button>
                             </form>
                         </div>
-                        <div className="flex flex-wrap md:flex-nowrap gap-2 my-5">
-                            <div className=" flex justify-center items-center">
+                        <div className="flex flex-col xl:flex-row lg:flex-row items-center gap-4 w-full p-4">
+                            <div className="flex justify-center items-center w-full   xl:w-[24vw]">
                                 <div className="bg-white shadow-md p-3 rounded-2xl w-full">
-                                    <h3 className="mb-4 font-bold text-lg font-sans">Hotel</h3>
+                                    <h3 className="mb-4 font-bold text-lg">Hotel</h3>
                                     <ReactApexChart
                                         options={hotelChartOptions}
                                         series={hotelSeries}
                                         type="area"
                                         height={200}
-                                        width={400}
+                                        width="100%"
                                     />
                                 </div>
                             </div>
 
-                            <div className="  flex justify-center items-center">
+                            <div className="flex justify-center items-center w-full   xl:w-[24vw]">
                                 <div className="bg-white shadow-md p-3 rounded-2xl w-full">
-                                    <h3 className="mb-4 font-bold text-lg font-sans">New Hotel</h3>
+                                    <h3 className="mb-4 font-bold text-lg">New Hotel</h3>
                                     <ReactApexChart
                                         options={newHotelChartOptions}
                                         series={newHotelSeries}
                                         type="area"
                                         height={200}
-                                        width={400}
+                                        width="100%"
                                     />
                                 </div>
                             </div>
 
-                            <div className="  flex flex-col justify-center items-start bg-white shadow-md px-3 pt-1 rounded-2xl ">
-                                <h3 className="  font-bold text-lg font-sans">Top Rated Hotels</h3>
-
-                                <ul className="">
+                            <div className="flex flex-col justify-center items-center bg-white   xl:w-[24vw] shadow-md px-3 pt-1 rounded-2xl w-full  ">
+                                <h3 className="font-bold text-lg">Top Rated Hotels</h3>
+                                <ul>
                                     {topRatedHotels.map((hotel, index) => (
                                         <li
                                             key={index}
-                                            className="relative flex items-center p-2 mb-3 rounded-lg bg-gray-100"
+                                            className="relative flex items-center px-2 py-1 mb-1 rounded-lg bg-gray-100 w-full"
                                         >
-                                            <div className=" flex items-center">
+                                            <div className="flex items-center">
                                                 <span className="font-bold">{index + 1}.</span>
                                                 <span className="ml-3 font-semibold">{hotel.name}</span>
                                             </div>
-                                            <div className="  flex items-center justify-between relative">
+                                            <div className="flex items-center justify-between relative w-full">
                                                 <div
                                                     className="absolute inset-0 rounded-lg"
                                                     style={{
@@ -216,17 +215,21 @@ const Hotels = ({ role }) => {
                                                         opacity: 0.3,
                                                     }}
                                                 ></div>
-                                                <div className="relative z-10 flex items-center w-full justify-end">
-                                                    {[...Array(5)].map((_, starIndex) => (
-                                                        <FaStar
-                                                            key={starIndex}
-                                                            className={`ml-1 ${hotel.rating >= starIndex + 1
-                                                                ? "text-yellow-400"
-                                                                : "text-gray-300"
-                                                                }`}
-                                                        />
-                                                    ))}
-                                                    <span className="ml-2 font-bold">{hotel.rating} ★</span>
+                                                ,/
+                                            </div>
+                                            <div className="relative z-10 flex items-center justify-between w-full">
+                                                {[...Array(5)].map((_, starIndex) => (
+                                                    <FaStar
+                                                        key={starIndex}
+                                                        className={`ml-1 ${hotel.rating >= starIndex + 1
+                                                            ? "text-yellow-400"
+                                                            : "text-gray-300"
+                                                            }`}
+                                                    />
+                                                ))}
+                                                <div className='flex'>
+                                                    <span className="ml-2 font-bold flex">{hotel.rating} </span>
+                                                    <span>★</span>
                                                 </div>
                                             </div>
                                         </li>
