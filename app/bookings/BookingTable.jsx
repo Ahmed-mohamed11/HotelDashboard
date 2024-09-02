@@ -10,6 +10,7 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
             onClick={() => paginate(currentPage - 1)}
             disabled={currentPage === 1}
             className="flex items-center gap-2 text-gray-500"
+            aria-label="Previous page"
         >
             <CaretLeft size={18} weight="bold" />
         </button>
@@ -22,9 +23,10 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
                             key={page}
                             onClick={() => paginate(page)}
                             className={`px-4 py-2 text-sm rounded-md ${page === currentPage
-                                    ? 'bg-green-500 text-white'
-                                    : 'bg-gray-100 text-gray-500'
+                                ? 'bg-green-500 text-white'
+                                : 'bg-gray-100 text-gray-500'
                                 }`}
+                            aria-label={`Page ${page}`}
                         >
                             {page}
                         </button>
@@ -36,6 +38,7 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
             onClick={() => paginate(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="flex items-center gap-2 text-gray-500"
+            aria-label="Next page"
         >
             <CaretRight size={18} weight="bold" />
         </button>
@@ -49,7 +52,7 @@ const RequestTable = ({ openCreate, openPreview }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const itemsPerPage = 10;
-    const totalPages = 10;
+    const totalPages = 10; // Replace with dynamic value if applicable
 
     const currentSet = useMemo(() => {
         if (totalPages <= 6) {
@@ -154,9 +157,6 @@ const RequestTable = ({ openCreate, openPreview }) => {
                                             Phone Number
                                         </th>
                                         <th scope="col" className="px-4 py-3">
-                                            Phone Number
-                                        </th>
-                                        <th scope="col" className="px-4 py-3">
                                             Hotel Email
                                         </th>
                                         <th scope="col" className="px-4 py-3">
@@ -176,9 +176,6 @@ const RequestTable = ({ openCreate, openPreview }) => {
                                             +1 234 567 890
                                         </td>
                                         <td className="px-4 py-3">
-                                            +1 234 567 890
-                                        </td>
-                                        <td className="px-4 py-3">
                                             info@hotelcalifornia.com
                                         </td>
                                         <td className="px-4 py-3">
@@ -193,6 +190,7 @@ const RequestTable = ({ openCreate, openPreview }) => {
                                                 (dropdownRefs.current[1] =
                                                     el)
                                                 }
+                                                aria-label="View details"
                                             >
                                                 <Eye
                                                     size={20}

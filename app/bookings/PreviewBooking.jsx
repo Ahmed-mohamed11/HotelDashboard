@@ -1,6 +1,7 @@
 'use client';
 import { useState, useCallback } from "react";
 import { Plus, X } from "@phosphor-icons/react";
+import { Badge, Button, Input, Label } from "reactstrap";
 import FormBtnIcon from "../form/FormBtnIcon";
 import FormText from "../form/FormText";
 import FormNumber from "../form/FormNumber";
@@ -8,8 +9,7 @@ import FormEmail from "../form/FormEmail";
 import FormSelect from "../form/FormSelect";
 import FormInput from "../form/FormInput";
 import debounce from 'lodash.debounce';
-import { Badge, Button, Input, Label } from "reactstrap";
- 
+
 export default function PreviewBooking({ closeModal }) {
     const [formData, setFormData] = useState({
         customerName: "name",
@@ -24,11 +24,9 @@ export default function PreviewBooking({ closeModal }) {
         checkOut: "18/4/2002"
     });
 
- 
-
     const handleChange = useCallback(debounce((e) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
+        setFormData(prevData => ({
             ...prevData,
             [name]: value,
         }));
@@ -39,7 +37,7 @@ export default function PreviewBooking({ closeModal }) {
             closeModal();
         }
     };
- 
+
     return (
         <div
             onClick={handleBackgroundClick}
@@ -178,32 +176,29 @@ export default function PreviewBooking({ closeModal }) {
                                 <div className="space-y-2">
                                     <Label>Features</Label>
                                     <div className="flex space-x-1">
-                                        <Badge variant="default">WIFI</Badge>
-                                        <Badge variant="default">AC</Badge>
-                                        <Badge variant="default">Free breakfast</Badge>
-                                        <Badge variant="default">VIP</Badge>
+                                        <Badge color="secondary">WIFI</Badge>
+                                        <Badge color="secondary">AC</Badge>
+                                        <Badge color="secondary">Free breakfast</Badge>
+                                        <Badge color="secondary">VIP</Badge>
                                     </div>
                                 </div>
                                 <div className="w-1/3">
                                     <Label htmlFor="adults">Adults</Label>
                                     <div className="flex items-center">
-                                        <Button variant="outline">-</Button>
+                                        <Button outline>-</Button>
                                         <Input id="adults" value="2" className="text-center" readOnly />
-                                        <Button variant="outline">+</Button>
+                                        <Button outline>+</Button>
                                     </div>
                                 </div>
                                 <div className="w-1/3">
                                     <Label htmlFor="children">Children</Label>
                                     <div className="flex items-center">
-                                        <Button variant="outline">-</Button>
+                                        <Button outline>-</Button>
                                         <Input id="children" value="2" className="text-center" readOnly />
-                                        <Button variant="outline">+</Button>
+                                        <Button outline>+</Button>
                                     </div>
                                 </div>
                             </div>
-
-                          
-
                             <div className="flex justify-center items-center gap-3 my-5">
                                 <div className="rounded-3xl bg-green-700">
                                     <FormBtnIcon
@@ -219,7 +214,6 @@ export default function PreviewBooking({ closeModal }) {
                                         Icon={Plus}
                                         type="submit"
                                         className="w-full mt-6 text-white font-bold py-2 px-4 rounded"
-                                         
                                     />
                                 </div>
                             </div>

@@ -7,7 +7,6 @@ import FormNumber from "../form/FormNumber";
 import FormEmail from "../form/FormEmail";
 import FormSelect from "../form/FormSelect";
 import FormInput from "../form/FormInput";
-import debounce from 'lodash.debounce';
 import { Badge, Button, Input, Label } from "reactstrap";
 
 export default function AddBooking({ closeModal, modal }) {
@@ -24,13 +23,14 @@ export default function AddBooking({ closeModal, modal }) {
         checkOut: "18/4/2002"
     });
 
-    const handleChange = useCallback(debounce((e) => {
+    const handleChange = 
+        (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
-    }, 300), []);
+    };
 
     const handleBackgroundClick = (e) => {
         if (e.target === e.currentTarget) {
@@ -54,9 +54,9 @@ export default function AddBooking({ closeModal, modal }) {
                             type="button"
                             onClick={closeModal}
                             className="text-gray-400 hover:bg-gray-200 rounded-lg text-sm p-1.5 inline-flex items-center"
+                            aria-label="Close modal"
                         >
                             <X size={18} weight="bold" />
-                            <span className="sr-only">Close modal</span>
                         </button>
                     </div>
                     <form>
@@ -136,7 +136,7 @@ export default function AddBooking({ closeModal, modal }) {
                                         name="checkIn"
                                         value={formData.checkIn}
                                         required
-                                        type={"date"}
+                                        type="date"
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -144,53 +144,55 @@ export default function AddBooking({ closeModal, modal }) {
                                     <FormInput
                                         label="Check Out"
                                         name="checkOut"
-                                        type={"date"}
+                                        type="date"
                                         value={formData.checkOut}
                                         onChange={handleChange}
                                     />
                                 </div>
                             </div>
-                            <div className="flex justify-between items-center gap-3 my-3">   <div className="w-1/2">
-                                <FormText
-                                    label="Customer ID"
-                                    name="customerID"
-                                    value={formData.customerID}
-                                    placeholder="Enter Customer ID"
-                                    required
-                                    onChange={handleChange}
-                                />
-                            </div>
+                            <div className="flex justify-between items-center gap-3 my-3">
                                 <div className="w-1/2">
-                                    <FormNumber
-                                        label="room Number"
-                                        name="roomNumber"
-                                        value={formData.roomNumber}
-                                        placeholder=" 123456789"
+                                    <FormText
+                                        label="Customer ID"
+                                        name="customerID"
+                                        value={formData.customerID}
+                                        placeholder="Enter Customer ID"
                                         required
                                         onChange={handleChange}
                                     />
-                                </div></div>
+                                </div>
+                                <div className="w-1/2">
+                                    <FormNumber
+                                        label="Room Number"
+                                        name="roomNumber"
+                                        value={formData.roomNumber}
+                                        placeholder="123456789"
+                                        required
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
                             <div className="flex gap-4 items-center">
-                                <div className="space-y-2 ">
+                                <div className="space-y-2">
                                     <Label>Features</Label>
-                                    <div className="flex  space-x-1">
+                                    <div className="flex space-x-1">
                                         <Badge variant="default">WIFI</Badge>
                                         <Badge variant="default">AC</Badge>
                                         <Badge variant="default">Free breakfast</Badge>
                                         <Badge variant="default">VIP</Badge>
                                     </div>
                                 </div>
-                                <div className=" w-1/3">
+                                <div className="w-1/3">
                                     <Label htmlFor="adults">Adults</Label>
-                                    <div className="flex items-center  ">
+                                    <div className="flex items-center">
                                         <Button variant="outline">-</Button>
                                         <Input id="adults" value="2" className="text-center" readOnly />
                                         <Button variant="outline">+</Button>
                                     </div>
                                 </div>
-                                <div className="w-1/3 ">
+                                <div className="w-1/3">
                                     <Label htmlFor="children">Children</Label>
-                                    <div className="flex items-center  ">
+                                    <div className="flex items-center">
                                         <Button variant="outline">-</Button>
                                         <Input id="children" value="2" className="text-center" readOnly />
                                         <Button variant="outline">+</Button>
@@ -205,7 +207,6 @@ export default function AddBooking({ closeModal, modal }) {
                                         type="submit"
                                         className="w-full mt-6 bg-green-700 text-white font-bold py-2 px-4 rounded"
                                     />
-                                   
                                 </div>
                             </div>
                         </div>

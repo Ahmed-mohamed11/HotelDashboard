@@ -25,8 +25,7 @@ const Hotels = ({ role }) => {
     useEffect(() => {
         const ctx = gsap.context(() => {
             gsap.fromTo(".greeting", { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1 });
-            gsap.fromTo(".card1", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, stagger: 0.2 });
-        }, ".animate-context");
+         }, ".animate-context");
 
         return () => ctx.revert();
     }, []);
