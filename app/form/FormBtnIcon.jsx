@@ -3,7 +3,7 @@ import React from "react";
 function FormBtnIcon({ label, icon }) {
   return (
     <button
-      type="submit"
+     
       className="text-white gap-2 inline-flex font-sans  
         outline-none font-medium  
         text-sm px-5 py-2.5  

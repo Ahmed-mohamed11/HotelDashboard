@@ -12,6 +12,7 @@ import ReactApexChart from 'react-apexcharts';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { LuUserCheck } from 'react-icons/lu';
 import { TbScreenShareOff } from 'react-icons/tb';
+import PreviewRoom2 from './PreviewRoom2';
 
 const inter = Inter({ subsets: ['latin'], weight: ['400', '600'] });
 
@@ -19,6 +20,7 @@ const Rooms = ({ role }) => {
     const [openCreate, setOpenCreate] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [openPreview, setOpenPreview] = useState(false);
+    const [openPreview2, setOpenPreview2] = useState(false);
 
     const toggleOpenCreateModal = useCallback(() => {
         setOpenCreate(prev => !prev);
@@ -28,6 +30,9 @@ const Rooms = ({ role }) => {
     }, []);
     const toggleOpenPreviewModal = useCallback(() => {
         setOpenPreview(prev => !prev);
+    }, []);
+    const toggleOpenPreviewModal2 = useCallback(() => {
+        setOpenPreview2(prev => !prev);
     }, []);
 
     useEffect(() => {
@@ -185,8 +190,16 @@ const Rooms = ({ role }) => {
                     {openPreview && (
                         <PreviewRoom
                             closeModal={() => setOpenPreview(false)}
+                            openPreview2={toggleOpenPreviewModal2}
+
                         />
                     )}
+                    {openPreview2 && (
+                        <PreviewRoom2
+                            closeModal={() => setOpenPreview2(false)}
+                        />
+                    )}
+                 
                     </div>
                 </div>
               

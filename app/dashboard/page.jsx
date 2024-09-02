@@ -11,10 +11,11 @@ const routes = [
     { path: '/', name: 'Dashboard', icon: <FaSitemap /> },
     { path: '/bookings', name: 'New bookings', icon: <FaUser /> },
     { path: '/rooms', name: 'Rooms', icon: <FaStore /> },
-    { path: '/requests', name: 'requests', icon: <FaStore /> },
-    { path: '/hotels', name: 'hotels', icon: <FaStore /> },
+    { path: '/requests', name: 'Requests', icon: <FaStore /> },
+    { path: '/hotels', name: 'Hotels', icon: <FaStore /> },
     { path: '/sign', name: 'Sign out', icon: <FaSignOutAlt /> },
 ];
+
 
 const Dashboard = ({ children }) => {
     const [activeLink, setActiveLink] = useState(0);
@@ -30,35 +31,32 @@ const Dashboard = ({ children }) => {
     };
 
     useEffect(() => {
-        const tl = gsap.timeline();
-        tl.fromTo('.aside-content', { opacity: 0, y: -100 }, { opacity: 1, y: 0, duration: 0.5 })
+        gsap.timeline()
+            .fromTo('.aside-content', { opacity: 0, y: -100 }, { opacity: 1, y: 0, duration: 0.5 })
             .fromTo('.content', { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 0.5 }, "-=0.2");
     }, []);
 
     return (
-        <div className="  h-screen font-sans">
+        <div className="h-screen font-sans">
             <button
-                className="top-4 left-4 z-50 fixed lg:hidden text-gray-600"
+                className="fixed top-4 left-4 z-50 lg:hidden text-gray-600"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
-                {isSidebarOpen ? <FiX size={28} className='relative top-4 left-48 gap-3 bg-green-300' /> : <FiMenu size={24} />}
+                {isSidebarOpen ? <FiX size={28} className="relative top-4 left-48 gap-3 bg-green-300" /> : <FiMenu size={24} />}
             </button>
 
-            <aside className={`fixed top-0 left-0 h-screen bg-white shadow-md shadow-gray-500 p-4 z-40 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out lg:w-60 md:w-60`}>
+            <aside className={`fixed top-0 left-0 h-screen bg-white shadow-md p-4 z-40 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out lg:w-60 md:w-60`}>
                 <div>
                     <div className="flex justify-evenly md:justify-start items-end my-3 font-bold text-3xl aside-content">
-                        <Image src={logo} alt='Logo' width={70} height={70} className='lg:block relative -top-5 sm:hidden shadow-gray-200 shadow-md rounded-full' />
-                        <span className='text-[#151D48] text-5xl'>Zayer</span>
+                        <Image src={logo} alt="Logo" width={70} height={70} className="lg:block relative -top-5 sm:hidden shadow-gray-200 shadow-md rounded-full" />
+                        <span className="text-[#151D48] text-5xl">Zayer</span>
                     </div>
                     <nav>
                         {memoizedRoutes.map((item, index) => (
                             <Link
                                 key={item.path}
                                 href={item.path}
-                                className={`content font-sans text-lg text-gray-600 tracking-wider flex items-center w-full px-3 py-2 mb-3 rounded-md ${activeLink === index
-                                    ? 'bg-green-500 text-white'
-                                    : 'hover:bg-green-500 hover:text-white'
-                                    } relative no-underline`}
+                                className={`content font-sans no-underline text-lg text-gray-600 tracking-wider flex items-center w-full px-3 py-2 mb-3 rounded-md ${activeLink === index ? 'bg-green-500 text-white' : 'hover:bg-green-500 hover:text-white'}`}
                                 onClick={() => handleLinkClick(index)}
                             >
                                 <span className="mr-2 text-xl">{item.icon}</span>
@@ -76,4 +74,4 @@ const Dashboard = ({ children }) => {
     );
 };
 
-export default Dashboard;
+export default React.memo(Dashboard);
