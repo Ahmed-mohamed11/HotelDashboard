@@ -4,6 +4,7 @@ import { FaBell, FaHandshake } from 'react-icons/fa';
 import RequestTable from './BookingTable';
 import Chart from 'react-apexcharts';
 import gsap from 'gsap';
+import DropdownUser from '../home/DropdownUser';
 
 const PreviewBooking = lazy(() => import('./PreviewBooking'));
 const AddBooking = lazy(() => import('./AddBooking'));
@@ -98,6 +99,7 @@ const Bookings = ({ role }) => {
                             className="border-gray-300 p-2 border rounded-lg"
                             aria-label="Search bookings"
                         />
+                        <DropdownUser />
                         <button
                             type="button"
                             className="p-2 rounded-lg text-yellow-400"

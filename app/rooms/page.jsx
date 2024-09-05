@@ -9,6 +9,7 @@ import ReactApexChart from 'react-apexcharts';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { LuUserCheck } from 'react-icons/lu';
 import { TbScreenShareOff } from 'react-icons/tb';
+import DropdownUser from '../home/DropdownUser';
 
 // Lazy loading components for performance
 const AddBooking = lazy(() => import('./AddRoom'));
@@ -92,6 +93,7 @@ const Rooms = ({ role }) => {
                                     placeholder="Search..."
                                     className="border-gray-300 p-2 border rounded-lg"
                                 />
+                                <DropdownUser />
                                 <button
                                     type="button"
                                     className="p-2 rounded-lg text-yellow-400"

@@ -9,6 +9,7 @@ import ReactApexChart from 'react-apexcharts';
 import HotelTable from './HotelTable';
 import AddHotel from './AddHotel';
 import PreviewHotel from './PreviewHotel';
+import DropdownUser from '../home/DropdownUser';
 
 const inter = Inter({ subsets: ['latin'], weight: ['400', '600'] });
 
@@ -167,6 +168,7 @@ const Hotels = ({ role }) => {
                             className="border-gray-300 p-2 border rounded-lg"
                             aria-label="Search bookings"
                         />
+                        <DropdownUser />
                         <button
                             type="button"
                             className="p-2 rounded-lg text-yellow-400"
@@ -174,6 +176,7 @@ const Hotels = ({ role }) => {
                             aria-label="Add new booking"
                         >
                             <FaBell size={24} />
+
                         </button>
                     </form>
                 </header>
