@@ -96,10 +96,7 @@ const HotelTable = ({ openCreate, openPreview }) => {
         setCurrentPage(pageNumber);
     }, []);
 
-    const handleDelete = (hotelId) => {
-         console.log('Deleting hotel with ID:', hotelId);
-    };
-
+  
     return (
         <div className="font-sans">
             <section className="p-0 my-4 sm:p-5">

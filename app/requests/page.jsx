@@ -24,11 +24,21 @@ const Hotels = ({ role }) => {
     }, []);
 
     useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.fromTo(".greeting", { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1 });
-        }, ".animate-context");
-
-        return () => ctx.revert();
+        if (typeof window !== 'undefined') {
+            const ctx = gsap.context(() => {
+                gsap.fromTo(
+                    ".greeting",
+                    { opacity: 0, y: -50 },
+                    { opacity: 1, y: 0, duration: 1 }
+                );
+                gsap.fromTo(
+                    ".chart-container",
+                    { opacity: 0, y: 50 },
+                    { opacity: 1, y: 0, duration: 1, stagger: 0.2 }
+                );
+            });
+            return () => ctx.revert();
+        }
     }, []);
 
     const hotelChartOptions = {
@@ -168,7 +178,7 @@ const Hotels = ({ role }) => {
                     </form>
                 </header>
                 <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 lg:grid-cols-2 gap-4 '>
-                    <div className="bg-white shadow-md p-3 rounded-2xl md:w-[45vw]  xl:w-[24vw] lg:w-[30vw] w-full">
+                    <div className="bg-white  chart-container shadow-md p-3 rounded-2xl md:w-[45vw]  xl:w-[24vw] lg:w-[30vw] w-full">
                         <h3 className="mb-4 font-bold text-lg">Hotel</h3>
                         <ReactApexChart
                             options={hotelChartOptions}
@@ -179,7 +189,7 @@ const Hotels = ({ role }) => {
                         />
                     </div>
 
-                    <div className="bg-white shadow-md p-3 rounded-2xl w-full md:w-[40vw] lg:w-[30vw] xl:w-[24vw]  ">
+                    <div className="bg-white shadow-md  chart-container p-3 rounded-2xl w-full md:w-[40vw] lg:w-[30vw] xl:w-[24vw]  ">
                         <h3 className="mb-4 font-bold text-lg">New Hotel</h3>
                         <ReactApexChart
                             options={newHotelChartOptions}
@@ -190,7 +200,7 @@ const Hotels = ({ role }) => {
                         />
                     </div>
 
-                    <div className="flex flex-col justify-center items-center bg-white   xl:w-[24vw] shadow-md px-3 pt-1 rounded-2xl w-full  ">
+                    <div className="flex flex-col justify-center items-center bg-white  chart-container  xl:w-[24vw] shadow-md px-3 pt-1 rounded-2xl w-full  ">
                         <h3 className="font-bold text-lg">Top Rated Hotels</h3>
                         <ul>
                             {topRatedHotels.map((hotel, index) => (

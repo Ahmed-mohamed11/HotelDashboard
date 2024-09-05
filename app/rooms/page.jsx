@@ -24,22 +24,30 @@ const Rooms = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openPreview2, setOpenPreview2] = useState(false);
 
-    // Memoized toggle functions to prevent unnecessary re-renders
-    const toggleOpenCreateModal = useCallback(() => setOpenCreate(prev => !prev), []);
+     const toggleOpenCreateModal = useCallback(() => setOpenCreate(prev => !prev), []);
     const toggleOpenEditModal = useCallback(() => setOpenEdit(prev => !prev), []);
     const toggleOpenPreviewModal = useCallback(() => setOpenPreview(prev => !prev), []);
     const toggleOpenPreviewModal2 = useCallback(() => setOpenPreview2(prev => !prev), []);
 
     useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.fromTo(".greeting", { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1 });
-            gsap.fromTo(".card1", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, stagger: 0.2 });
-        }, ".animate-context");
+        if (typeof window !== 'undefined') {
+            const ctx = gsap.context(() => {
+                gsap.fromTo(
+                    ".greeting",
+                    { opacity: 0, y: -50 },
+                    { opacity: 1, y: 0, duration: 1 }
+                );
+                gsap.fromTo(
+                    ".chart-container",
+                    { opacity: 0, y: 50 },
+                    { opacity: 1, y: 0, duration: 1, stagger: 0.2 }
+                );
+                gsap.fromTo(".card1", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, stagger: 0.2 });
 
-        return () => ctx.revert();
+            });
+            return () => ctx.revert();
+        }
     }, []);
-
-    // Reusable Card component
     const Card = ({ icon: Icon, label, h1, value, colorClass, colorIcon }) => (
         <div className={`card1 flex flex-col w-36 items-start rounded-lg ps-2 py-2 shadow-md ${colorClass}`}>
             <div className={`h-8 w-8 my-3 flex justify-center items-center rounded-full ${colorIcon}`}>
@@ -62,8 +70,7 @@ const Rooms = ({ role }) => {
         },
     };
 
-    // Data series for the chart
-    const series = [
+     const series = [
         { name: "Empty Room", data: [30, 40, 35, 50, 49, 60, 70, 91, 125, 145, 160, 175] },
         { name: "Book Room", data: [20, 30, 25, 40, 45, 50, 55, 65, 80, 95, 105, 115] },
     ];
@@ -143,7 +150,7 @@ const Rooms = ({ role }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-white shadow-md py-3 rounded-2xl w-[90vw] xl:w-[30vw] lg:w-[30vw] md:w-[80vw] px-8">
+                            <div className="bg-white shadow-md chart-container py-3 rounded-2xl w-[90vw] xl:w-[30vw] lg:w-[30vw] md:w-[80vw] px-8">
                                 <h3 className="mb-4 font-bold text-lg">Reserved rooms / Empty rooms</h3>
                                 <ReactApexChart options={chartOptions} series={series} type="line" height={200} />
                             </div>
