@@ -153,7 +153,7 @@ const Hotels = ({ role }) => {
     };
 
     return (
-        <main className="flex flex-col lg:flex-row w-full p-4  overflow-x-auto">
+        <main className="flex flex-col lg:flex-row w-full p-4 -mt-5 overflow-x-auto">
             <section className='flex-1 lg:overflow-x-auto '>
                 <header className="flex justify-between items-center  bg-white p-4 rounded-lg shadow-md mb-4">
                     <h3 className="flex items-center gap-3 font-bold greeting" aria-label="Requests">

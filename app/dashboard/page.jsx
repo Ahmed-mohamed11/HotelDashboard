@@ -1,12 +1,11 @@
-// app/dashboard/page.jsx
-'use client';
+ 'use client';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { FaStore, FaSitemap, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { gsap } from 'gsap';
 import Link from 'next/link';
 import Image from 'next/image';
-import logo from '../images/Logo-green 1.svg'; // Adjust path as needed
+import logo from '../images/Logo-green 1.svg';  
 
 const routes = [
     { path: '/', name: 'Dashboard', icon: <FaSitemap /> },

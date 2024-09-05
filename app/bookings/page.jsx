@@ -83,7 +83,7 @@ const Bookings = ({ role }) => {
     }, []);
 
     return (
-        <main className="flex flex-col lg:flex-row w-full p-4">
+        <main className="flex flex-col lg:flex-row w-full p-4 -mt-5">
             <section className='flex-1'>
                 <header className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md mb-4">
                     <h3 className="flex items-center gap-3 font-bold greeting" aria-label="Bookings">

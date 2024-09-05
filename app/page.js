@@ -1,3 +1,4 @@
+ 'use client'
  import Main from "./home/page.jsx";
 
 export default function Home() {

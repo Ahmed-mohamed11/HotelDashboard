@@ -17,8 +17,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${tajawal.className} flex font-sans`}>
-        <Dashboard />  
-        {children}  
+        <Dashboard />
+        {children}
       </body>
     </html>
   );

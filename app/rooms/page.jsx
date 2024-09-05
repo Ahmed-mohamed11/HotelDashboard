@@ -76,7 +76,7 @@ const Rooms = ({ role }) => {
     ];
 
     return (
-        <div className={`flex justify-between font-sans ${inter.className}`}>
+        <div className={`flex justify-between font-sans  ${inter.className}`}>
             <div className='flex font-sans flex-col w-full'>
                 <div>
                     <div className="animate-context">
