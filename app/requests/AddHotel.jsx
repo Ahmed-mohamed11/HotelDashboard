@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Plus, X } from "@phosphor-icons/react";
 import FormBtnIcon from "../form/FormBtnIcon";
 import FormText from "../form/FormText";
@@ -8,6 +8,8 @@ import FormTextArea from "../form/FormTextArea";
 import FormEmail from "../form/FormEmail";
 import FormSelect from "../form/FormSelect";
 import FormPic from "../form/FormPic";
+
+const convenienceOptions = ["wifi", "parking", "laundry", "ac", "bar"];
 
 const AddHotel = ({ closeModal, role, modal }) => {
     const [formData, setFormData] = useState({
@@ -32,20 +34,16 @@ const AddHotel = ({ closeModal, role, modal }) => {
 
     const handleChange = useCallback((e) => {
         const { name, value, type, checked } = e.target;
-        if (name === "convenience") {
-            setFormData(prevData => ({
-                ...prevData,
-                convenience: {
+        setFormData(prevData => ({
+            ...prevData,
+            [name]: type === 'checkbox' ? checked : value,
+            convenience: name === "convenience"
+                ? {
                     ...prevData.convenience,
                     [value]: !prevData.convenience[value],
-                },
-            }));
-        } else {
-            setFormData(prevData => ({
-                ...prevData,
-                [name]: type === 'checkbox' ? checked : value,
-            }));
-        }
+                }
+                : prevData.convenience,
+        }));
     }, []);
 
     const handleFileUpload = useCallback((e) => {
@@ -69,6 +67,23 @@ const AddHotel = ({ closeModal, role, modal }) => {
         }
     }, [closeModal]);
 
+    const convenienceCheckboxes = useMemo(() => (
+        convenienceOptions.map(convenience => (
+            <div key={convenience} className="flex items-center">
+                <input
+                    type="checkbox"
+                    id={convenience}
+                    name="convenience"
+                    value={convenience}
+                    checked={formData.convenience[convenience]}
+                    onChange={handleChange}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 rounded"
+                />
+                <label htmlFor={convenience} className="ml-2 text-sm font-medium text-gray-900 capitalize">{convenience}</label>
+            </div>
+        ))
+    ), [formData.convenience, handleChange]);
+
     return (
         <div
             onClick={handleBackgroundClick}
@@ -77,6 +92,8 @@ const AddHotel = ({ closeModal, role, modal }) => {
             <div
                 className={`CreateBooking font-sans fw-bold w-full bg-white rounded-lg shadow-lg fixed top-0 right-0 h-full ${modal ? "translate-x-0" : "translate-x-full"} transition-transform duration-300 ease-in-out`}
                 style={{ width: '40vw', zIndex: 50 }}
+                aria-modal="true"
+                role="dialog"
             >
                 <div className="relative text-gray-900">
                     <div className="bg-green-700 w-full flex justify-between items-center text-white p-3 mb-4 rounded-t-lg border-b">
@@ -85,15 +102,15 @@ const AddHotel = ({ closeModal, role, modal }) => {
                             type="button"
                             onClick={closeModal}
                             className="text-gray-400 hover:bg-gray-200 rounded-lg text-sm p-1.5 inline-flex items-center"
+                            aria-label="Close modal"
                         >
                             <X size={18} weight="bold" />
-                            <span className="sr-only">Close modal</span>
                         </button>
                     </div>
                     <form>
                         <div className="space-y-4 px-4">
                             <div className="flex gap-3">
-                                <div className=" md:w-1/2 lg:w-1/2">
+                                <div className="w-full md:w-1/2 lg:w-1/2">
                                     <FormText
                                         label="Hotel Name"
                                         name="hotelName"
@@ -114,7 +131,7 @@ const AddHotel = ({ closeModal, role, modal }) => {
                                     />
                                 </div>
                             </div>
-                            <div className="flex  gap-3">
+                            <div className="flex gap-3">
                                 <div className="w-full md:w-1/2 lg:w-1/2">
                                     <FormNumber
                                         label="Contact Number"
@@ -135,7 +152,7 @@ const AddHotel = ({ closeModal, role, modal }) => {
                                     />
                                 </div>
                             </div>
-                            <div className="flex  gap-3">
+                            <div className="flex gap-3">
                                 <div className="w-full md:w-1/2 lg:w-1/2">
                                     <FormText
                                         label="Address"
@@ -156,7 +173,7 @@ const AddHotel = ({ closeModal, role, modal }) => {
                                     />
                                 </div>
                             </div>
-                            <div className="flex  gap-3">
+                            <div className="flex gap-3">
                                 <div className="w-full md:w-1/2 lg:w-1/2">
                                     <FormTextArea
                                         label="Description"
@@ -170,30 +187,17 @@ const AddHotel = ({ closeModal, role, modal }) => {
                                 <div className="w-full md:w-1/2 lg:w-1/2">
                                     <h4 className="text-gray-900 text-left mb-1">Convenience</h4>
                                     <div className="grid grid-cols-2 gap-1">
-                                        {["wifi", "parking", "laundry", "ac", "bar"].map(convenience => (
-                                            <div key={convenience} className="flex items-center">
-                                                <input
-                                                    type="checkbox"
-                                                    id={convenience}
-                                                    name="convenience"
-                                                    value={convenience}
-                                                    checked={formData.convenience[convenience]}
-                                                    onChange={handleChange}
-                                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 rounded"
-                                                />
-                                                <label htmlFor={convenience} className="ml-2 text-sm font-medium text-gray-900 capitalize">{convenience}</label>
-                                            </div>
-                                        ))}
+                                        {convenienceCheckboxes}
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex  gap-3">
+                            <div className="flex gap-3">
                                 <div className="w-full md:w-1/2 lg:w-1/2">
                                     <FormSelect
                                         selectLabel="Location"
                                         name="locationType"
                                         value={formData.locationType}
-                                        options={[{ value: "urban", label: "Type location" }]}
+                                        options={[{ value: "urban", label: "Urban" }]}
                                         handleChange={handleChange}
                                     />
                                 </div>
@@ -210,40 +214,43 @@ const AddHotel = ({ closeModal, role, modal }) => {
                                                 viewBox="0 0 24 24"
                                                 stroke="currentColor"
                                                 strokeWidth={2}
+                                                aria-label={`Rate ${i + 1} stars`}
                                             >
                                                 <path
                                                     strokeLinecap="round"
                                                     strokeLinejoin="round"
-                                                    d="M12 17.27l5.18 3.73-1.64-7.03L21 9.24l-7.19-.61L12 2 10.19 8.63 3 9.24l5.46 4.73-1.64 7.03L12 17.27z"
+                                                    d="M12 17.27l5.18 3.73-1.64-7.03L21 9.24l-7.19-.61L12 2 10.19 8.63 3 9.24l5.46 4.73L6.82 21.0 12 17.27z"
                                                 />
                                             </svg>
                                         ))}
                                     </div>
                                 </div>
                             </div>
-                            <div className="w-full text-center">
-                                <FormPic
-                                    label="Upload Image"
-                                    name="file"
-                                    onChange={handleFileUpload}
-                                />
+                            <div className="flex gap-3">
+                                <div className="w-full md:w-1/2 lg:w-1/2">
+                                    <FormPic
+                                        label="Upload Picture"
+                                        name="file"
+                                        onChange={handleFileUpload}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex justify-around items-start gap-2 mt-3">
-                            <button
-                                type="button"
-                                className="px-4 py-2 w-fit bg-green-700 text-white rounded-lg shadow-md hover:bg-green-800"
-                            >
-                              Approve
-                                
-                            </button>
-                            <button
-                                type="button"
-                                onClick={closeModal}
-                                className="px-4 py-2 w-fit bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700"
-                            >
-                                Decline
-                            </button>
+                            <div className="flex justify-end gap-4 mt-2">
+                                <button
+                                    type="button"
+                                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                    onClick={closeModal}
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    type="button"
+                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                    onClick={closeModal}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>

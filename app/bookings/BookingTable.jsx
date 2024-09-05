@@ -1,4 +1,3 @@
-// RequestTable Component
 'use client';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { CaretLeft, CaretRight, Eye, Plus, MagnifyingGlass } from '@phosphor-icons/react';
@@ -9,7 +8,7 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
         <button
             onClick={() => paginate(currentPage - 1)}
             disabled={currentPage === 1}
-            className="flex items-center gap-2 text-gray-500"
+            className="flex items-center gap-2 text-gray-500 disabled:opacity-50"
             aria-label="Previous page"
         >
             <CaretLeft size={18} weight="bold" />
@@ -37,7 +36,7 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
         <button
             onClick={() => paginate(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="flex items-center gap-2 text-gray-500"
+            className="flex items-center gap-2 text-gray-500 disabled:opacity-50"
             aria-label="Next page"
         >
             <CaretRight size={18} weight="bold" />
@@ -45,14 +44,24 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
     </div>
 );
 
+// Optimized RequestTable Component
 const RequestTable = ({ openCreate, openPreview }) => {
     const dropdownRefs = useRef({});
     const [selectedHotelId, setSelectedHotelId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
     const itemsPerPage = 10;
     const totalPages = 10; // Replace with dynamic value if applicable
+
+    // Debounce search input
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm);
+        }, 300); // 300ms debounce
+        return () => clearTimeout(handler);
+    }, [searchTerm]);
 
     const currentSet = useMemo(() => {
         if (totalPages <= 6) {
@@ -106,10 +115,10 @@ const RequestTable = ({ openCreate, openPreview }) => {
                     <div className="bg-white relative shadow-md rounded-lg">
                         <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                             <div className="w-full md:w-1/2 hidden md:block">
-                                <h4 className="fw-bold font-sans">All Bookings</h4>
+                                <h4 className="font-semibold">All Bookings</h4>
                             </div>
-                            <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-                                <form className="flex items-center justify-between w-full md:w-auto">
+                            <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3">
+                                <form className="flex items-center w-full md:w-auto">
                                     <div className="relative w-full">
                                         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                             <MagnifyingGlass
@@ -120,15 +129,15 @@ const RequestTable = ({ openCreate, openPreview }) => {
                                         </div>
                                         <input
                                             type="text"
-                                            id="simple-search"
-                                            className="flex items-center align-middle text-gray-900 text-sm rounded-lg w-full pl-10 py-1 bg-green-100 outline-none border border-gray-500"
+                                            className="text-gray-900 text-sm rounded-lg w-full pl-10 py-1 bg-green-100 outline-none border border-gray-500"
                                             placeholder="Search"
-                                            required
+                                            value={searchTerm}
                                             onChange={handleSearchChange}
+                                            aria-label="Search bookings"
                                         />
                                     </div>
                                 </form>
-                                <select className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-auto p-1">
+                                <select className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 block w-full md:w-auto p-1">
                                     <option value="" disabled>
                                         Sort by: Newest
                                     </option>
@@ -138,8 +147,7 @@ const RequestTable = ({ openCreate, openPreview }) => {
                                 </select>
                                 <button
                                     onClick={openCreate}
-                                    type="button"
-                                    className="flex gap-2 w-full md:w-auto fw-bold font-sans items-center justify-center duration-150 ease-linear text-white hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 bg-green-700"
+                                    className="flex gap-2 items-center text-white bg-green-700 hover:bg-green-600 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-4 py-2 duration-150 ease-in-out"
                                 >
                                     <Plus size={18} weight="bold" />
                                     Add Booking
@@ -150,52 +158,27 @@ const RequestTable = ({ openCreate, openPreview }) => {
                             <table className="w-full text-sm text-left text-gray-500">
                                 <thead className="text-md text-gray-700 uppercase text-center">
                                     <tr>
-                                        <th scope="col" className="px-4 py-4">
-                                            Hotel Name
-                                        </th>
-                                        <th scope="col" className="px-4 py-3">
-                                            Phone Number
-                                        </th>
-                                        <th scope="col" className="px-4 py-3">
-                                            Hotel Email
-                                        </th>
-                                        <th scope="col" className="px-4 py-3">
-                                            City
-                                        </th>
-                                        <th scope="col" className="px-4 py-3">
-                                            Actions
-                                        </th>
+                                        <th className="px-4 py-4">Hotel Name</th>
+                                        <th className="px-4 py-3">Phone Number</th>
+                                        <th className="px-4 py-3">Hotel Email</th>
+                                        <th className="px-4 py-3">City</th>
+                                        <th className="px-4 py-3">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr className="border-b text-center">
+                                        <td className="px-4 py-3">Hotel California</td>
+                                        <td className="px-4 py-3">+1 234 567 890</td>
+                                        <td className="px-4 py-3">info@hotelcalifornia.com</td>
+                                        <td className="px-4 py-3">Los Angeles</td>
                                         <td className="px-4 py-3">
-                                            Hotel California
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            +1 234 567 890
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            info@hotelcalifornia.com
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            Los Angeles
-                                        </td>
-                                        <td className="px-4 py-3 flex items-center justify-center">
                                             <button
-                                                className="inline-flex items-center justify-evenly w-20 text-md font-medium hover:bg-green-100 border p-2 text-green-800 hover:text-gray-800 rounded-lg view-button"
-                                                type="button"
+                                                className="flex items-center text-green-800 hover:bg-green-100 border p-2 rounded-lg"
                                                 onClick={openPreview}
-                                                ref={(el) =>
-                                                (dropdownRefs.current[1] =
-                                                    el)
-                                                }
+                                                ref={(el) => (dropdownRefs.current[1] = el)}
                                                 aria-label="View details"
                                             >
-                                                <Eye
-                                                    size={20}
-                                                    weight="bold"
-                                                />
+                                                <Eye size={20} weight="bold" />
                                                 View
                                             </button>
                                         </td>
@@ -215,4 +198,4 @@ const RequestTable = ({ openCreate, openPreview }) => {
     );
 };
 
-export default RequestTable;
+export default  RequestTable;

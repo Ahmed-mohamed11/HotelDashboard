@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Plus, X } from "@phosphor-icons/react";
 import FormBtnIcon from "../form/FormBtnIcon";
 import FormText from "../form/FormText";
@@ -8,7 +8,7 @@ import FormEmail from "../form/FormEmail";
 import FormSelect from "../form/FormSelect";
 import FormInput from "../form/FormInput";
 import debounce from 'lodash.debounce';
- 
+
 export default function AddBooking({ closeModal, modal }) {
     const [formData, setFormData] = useState({
         customerName: "",
@@ -21,39 +21,57 @@ export default function AddBooking({ closeModal, modal }) {
         checkOut: "18/4/2002"
     });
 
-    const handleChange = useCallback(debounce((e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    }, 300), []);
+    const debouncedHandleChange = useMemo(() =>
+        debounce((e) => {
+            const { name, value } = e.target;
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }, 300), []);
 
-    const handleBackgroundClick = (e) => {
+    const handleChange = useCallback((e) => {
+        debouncedHandleChange(e);
+    }, [debouncedHandleChange]);
+
+    const handleBackgroundClick = useCallback((e) => {
         if (e.target === e.currentTarget) {
             closeModal();
         }
-    };
+    }, [closeModal]);
+
+    const modalClasses = useMemo(() =>
+        `fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center ${modal ? "visible" : "invisible"}`,
+        [modal]
+    );
+
+    const bookingPanelClasses = useMemo(() =>
+        `CreateBooking font-sans fw-bold w-full bg-white rounded-lg shadow-lg fixed top-0 right-0 h-full ${modal ? "translate-x-0" : "translate-x-full"} transition-transform duration-300 ease-in-out`,
+        [modal]
+    );
 
     return (
         <div
             onClick={handleBackgroundClick}
-            className={`fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center ${modal ? "visible" : "invisible"}`}
+            className={modalClasses}
+            role="dialog"
+            aria-labelledby="add-room-title"
+            aria-modal="true"
         >
             <div
-                className={`CreateBooking font-sans fw-bold w-full bg-white rounded-lg shadow-lg fixed top-0 right-0 h-full ${modal ? "translate-x-0" : "translate-x-full"} transition-transform duration-300 ease-in-out`}
+                className={bookingPanelClasses}
                 style={{ width: '40vw', zIndex: 50 }}
             >
                 <div className="relative text-gray-900">
                     <div className="bg-green-700 w-full flex justify-between items-center text-white p-3 mb-4 rounded-t-lg border-b">
-                        <h3 className="text-lg font-semibold">Add Room</h3>
+                        <h3 id="add-room-title" className="text-lg font-semibold">Add Room</h3>
                         <button
                             type="button"
                             onClick={closeModal}
                             className="text-gray-400 hover:bg-gray-200 rounded-lg text-sm p-1.5 inline-flex items-center"
+                            aria-label="Close modal"
                         >
                             <X size={18} weight="bold" />
-                            <span className="sr-only">Close modal</span>
                         </button>
                     </div>
                     <form>

@@ -1,18 +1,20 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import { FaBell, FaFileExport, FaHandshake } from 'react-icons/fa';
 import gsap from 'gsap';
 import { Inter } from 'next/font/google';
 import RoomTable from './RoomTable';
-import AddBooking from './AddRoom';
-import EditRoom from './EditRoom';
-import PreviewRoom from './PreviewRoom';
 import ReactApexChart from 'react-apexcharts';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { LuUserCheck } from 'react-icons/lu';
 import { TbScreenShareOff } from 'react-icons/tb';
-import PreviewRoom2 from './PreviewRoom2';
+
+// Lazy loading components for performance
+const AddBooking = lazy(() => import('./AddRoom'));
+const EditRoom = lazy(() => import('./EditRoom'));
+const PreviewRoom = lazy(() => import('./PreviewRoom'));
+const PreviewRoom2 = lazy(() => import('./PreviewRoom2'));
 
 const inter = Inter({ subsets: ['latin'], weight: ['400', '600'] });
 
@@ -22,6 +24,7 @@ const Rooms = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openPreview2, setOpenPreview2] = useState(false);
 
+    // Memoized toggle functions to prevent unnecessary re-renders
     const toggleOpenCreateModal = useCallback(() => setOpenCreate(prev => !prev), []);
     const toggleOpenEditModal = useCallback(() => setOpenEdit(prev => !prev), []);
     const toggleOpenPreviewModal = useCallback(() => setOpenPreview(prev => !prev), []);
@@ -36,6 +39,7 @@ const Rooms = ({ role }) => {
         return () => ctx.revert();
     }, []);
 
+    // Reusable Card component
     const Card = ({ icon: Icon, label, h1, value, colorClass, colorIcon }) => (
         <div className={`card1 flex flex-col w-36 items-start rounded-lg ps-2 py-2 shadow-md ${colorClass}`}>
             <div className={`h-8 w-8 my-3 flex justify-center items-center rounded-full ${colorIcon}`}>
@@ -49,6 +53,7 @@ const Rooms = ({ role }) => {
         </div>
     );
 
+    // Chart options
     const chartOptions = {
         chart: { id: "visitor-insights" },
         xaxis: {
@@ -57,6 +62,7 @@ const Rooms = ({ role }) => {
         },
     };
 
+    // Data series for the chart
     const series = [
         { name: "Empty Room", data: [30, 40, 35, 50, 49, 60, 70, 91, 125, 145, 160, 175] },
         { name: "Book Room", data: [20, 30, 25, 40, 45, 50, 55, 65, 80, 95, 105, 115] },
@@ -68,11 +74,13 @@ const Rooms = ({ role }) => {
                 <div>
                     <div className="animate-context">
                         <div className="flex justify-between items-center bg-white p-4">
-                            <h3 className="flex items-center gap-3 font-bold font-sans greeting">
+                            <h3 className="flex items-center gap-3 font-bold greeting">
                                 Rooms <FaHandshake size={32} />
                             </h3>
-                            <form className="flex items-center gap-2">
+                            <form className="flex items-center gap-2" aria-label="Search Form">
+                                <label htmlFor="search-room" className="sr-only">Search Rooms</label>
                                 <input
+                                    id="search-room"
                                     type="text"
                                     placeholder="Search..."
                                     className="border-gray-300 p-2 border rounded-lg"
@@ -81,6 +89,7 @@ const Rooms = ({ role }) => {
                                     type="button"
                                     className="p-2 rounded-lg text-yellow-400"
                                     onClick={toggleOpenCreateModal}
+                                    aria-label="Notifications"
                                 >
                                     <FaBell size={24} />
                                 </button>
@@ -91,14 +100,14 @@ const Rooms = ({ role }) => {
                                 <div className="bg-white shadow-md py-4 rounded-3xl xl:w-[43.8vw] lg:w-[33vw] pe-5 ps-4">
                                     <div className="flex justify-between">
                                         <div>
-                                            <h3 className="fw-bold font-sans">Today’s Sales</h3>
-                                            <h4 className="fw-bold font-sans text-gray-400">Sales Summary</h4>
+                                            <h3 className="font-bold">Today’s Sales</h3>
+                                            <h4 className="font-sans text-gray-400">Sales Summary</h4>
                                         </div>
-                                        <button className="flex justify-around items-center gap-3 border-2 px-3 py-2 border-blue-300 rounded-3xl w-28 h-full">
+                                        <button className="flex justify-around items-center gap-3 border-2 px-3 py-2 border-blue-300 rounded-3xl w-28 h-full" aria-label="Export Data">
                                             <FaFileExport /> Export
                                         </button>
                                     </div>
-                                    <div className="gap-12 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-12">
                                         <Card
                                             icon={AiOutlineUsergroupAdd}
                                             label="Total Sales"
@@ -134,8 +143,8 @@ const Rooms = ({ role }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-white shadow-md py-3 xl:px-5 lg:px-2 rounded-2xl w-[90vw] px-3 xl:w-[30vw] lg:w-[30vw] md:w-[80vw] md:px-8">
-                                <h3 className="mb-4 font-bold text-lg font-sans">Reserved rooms / Empty rooms</h3>
+                            <div className="bg-white shadow-md py-3 rounded-2xl w-[90vw] xl:w-[30vw] lg:w-[30vw] md:w-[80vw] px-8">
+                                <h3 className="mb-4 font-bold text-lg">Reserved rooms / Empty rooms</h3>
                                 <ReactApexChart options={chartOptions} series={series} type="line" height={200} />
                             </div>
                         </div>
@@ -145,15 +154,17 @@ const Rooms = ({ role }) => {
                         openPreview={toggleOpenPreviewModal}
                         openCreate={toggleOpenCreateModal}
                     />
-                    <AddBooking closeModal={toggleOpenCreateModal} modal={openCreate} role={role} />
-                    <EditRoom closeModal={toggleOpenEditModal} modal={openEdit} role={role} />
-                    {openPreview && (
-                        <PreviewRoom
-                            closeModal={() => setOpenPreview(false)}
-                            openPreview2={toggleOpenPreviewModal2}
-                        />
-                    )}
-                    {openPreview2 && <PreviewRoom2 closeModal={() => setOpenPreview2(false)} />}
+                    <Suspense fallback={<div>Loading...</div>}>
+                        {openCreate && <AddBooking closeModal={toggleOpenCreateModal} modal={openCreate} role={role} />}
+                        {openEdit && <EditRoom closeModal={toggleOpenEditModal} modal={openEdit} role={role} />}
+                        {openPreview && (
+                            <PreviewRoom
+                                closeModal={() => setOpenPreview(false)}
+                                openPreview2={toggleOpenPreviewModal2}
+                            />
+                        )}
+                        {openPreview2 && <PreviewRoom2 closeModal={() => setOpenPreview2(false)} />}
+                    </Suspense>
                 </div>
             </div>
         </div>

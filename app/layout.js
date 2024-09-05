@@ -1,5 +1,4 @@
- 
-import { Tajawal } from "next/font/google";
+ import { Tajawal } from "next/font/google";
 import Dashboard from "./dashboard/page";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -18,8 +17,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${tajawal.className} flex font-sans`}>
-        <Dashboard />
-        {children}
+        <Dashboard />  
+        {children}  
       </body>
     </html>
   );

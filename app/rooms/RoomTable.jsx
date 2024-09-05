@@ -1,8 +1,7 @@
 'use client';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Swal from 'sweetalert2';
-import { CaretLeft, CaretRight, Eye, PencilSimple, Plus, MagnifyingGlass, Trash, ToggleRight } from '@phosphor-icons/react';
-import { useMemo } from 'react';
+import { CaretLeft, CaretRight, Eye, PencilSimple, Plus, MagnifyingGlass, Trash } from '@phosphor-icons/react';
 
 export default function RequestTable({ openEdit, openCreate, openPreview }) {
     const dropdownRefs = useRef({});
@@ -16,14 +15,12 @@ export default function RequestTable({ openEdit, openCreate, openPreview }) {
     const initialRoomsData = [
         { id: 1, type: "Deluxe Suite", people: 4, rooms: 2, price: "$250", status: "FULL Reserved" },
         { id: 2, type: "Standard Room", people: 2, rooms: 1, price: "$100", status: "Available" }
-     ];
+    ];
 
     const [roomsData, setRoomsData] = useState(initialRoomsData);
 
     const currentSet = useMemo(() => {
-        if (totalPages <= 6) {
-            return Array.from({ length: totalPages }, (_, i) => i + 1);
-        }
+        if (totalPages <= 6) return Array.from({ length: totalPages }, (_, i) => i + 1);
         const startPage = Math.floor((currentPage - 1) / 6) * 6 + 1;
         return Array.from({ length: 6 }, (_, i) => startPage + i).filter(page => page <= totalPages);
     }, [currentPage, totalPages]);
@@ -99,7 +96,7 @@ export default function RequestTable({ openEdit, openCreate, openPreview }) {
                                 <form className="flex items-center justify-between">
                                     <div className="relative w-full">
                                         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                            <MagnifyingGlass size={20} weight="bold" className="mx-1 text-gray-500" />
+                                            <MagnifyingGlass size={20} weight="bold" className="mx-1 text-gray-500" aria-hidden="true" />
                                         </div>
                                         <input
                                             type="text"
@@ -107,11 +104,15 @@ export default function RequestTable({ openEdit, openCreate, openPreview }) {
                                             className="flex items-center align-middle text-gray-900 text-sm rounded-lg w-44 pl-10 py-1 bg-green-100 outline-none border border-gray-500"
                                             placeholder="Search"
                                             required
+                                            aria-label="Search"
                                             onChange={handleSearchChange}
                                         />
                                     </div>
                                 </form>
-                                <select className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1">
+                                <select
+                                    className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1"
+                                    aria-label="Sort rooms"
+                                >
                                     <option value="" disabled>Sort by: Newest</option>
                                     <option value="City 1">City 1</option>
                                     <option value="City 2">City 2</option>
@@ -121,6 +122,7 @@ export default function RequestTable({ openEdit, openCreate, openPreview }) {
                                     onClick={openCreate}
                                     type="button"
                                     className="flex gap-2 w-full items-center justify-center duration-150 ease-linear text-white hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 bg-green-700"
+                                    aria-label="Add room"
                                 >
                                     <Plus size={18} weight="bold" />
                                     Add Room
@@ -150,6 +152,7 @@ export default function RequestTable({ openEdit, openCreate, openPreview }) {
                                                 <button
                                                     className={`py-1 px-3 rounded-lg ${room.status === "Available" ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}
                                                     onClick={() => toggleStatus(room.id)}
+                                                    aria-label={`Change status for ${room.type}`}
                                                 >
                                                     {room.status}
                                                 </button>
@@ -159,7 +162,7 @@ export default function RequestTable({ openEdit, openCreate, openPreview }) {
                                                     className="inline-flex items-center justify-center w-10 text-md font-medium hover:bg-green-100 border p-2 text-green-800 hover:text-gray-800 rounded-lg"
                                                     type="button"
                                                     onClick={openEdit}
-                                                    ref={(el) => (dropdownRefs.current[room.id] = el)}
+                                                    aria-label={`Edit ${room.type}`}
                                                 >
                                                     <PencilSimple size={20} weight="bold" />
                                                 </button>
@@ -167,14 +170,15 @@ export default function RequestTable({ openEdit, openCreate, openPreview }) {
                                                     className="inline-flex items-center justify-center w-10 text-md font-medium hover:bg-green-100 border p-2 text-green-800 hover:text-gray-800 rounded-lg"
                                                     type="button"
                                                     onClick={openPreview}
-                                                    ref={(el) => (dropdownRefs.current[room.id] = el)}
+                                                    aria-label={`View ${room.type}`}
                                                 >
                                                     <Eye size={20} weight="bold" />
                                                 </button>
                                                 <button
-                                                    className="inline-flex items-center justify-center w-10 text-md font-medium hover:bg-red-100 border p-2 text-red-800 hover:text-gray-800 rounded-lg"
+                                                    className="inline-flex items-center justify-center w-10 text-md font-medium hover:bg-green-100 border p-2 text-green-800 hover:text-gray-800 rounded-lg"
                                                     type="button"
                                                     onClick={() => handleDelete(room.id)}
+                                                    aria-label={`Delete ${room.type}`}
                                                 >
                                                     <Trash size={20} weight="bold" />
                                                 </button>
@@ -184,28 +188,37 @@ export default function RequestTable({ openEdit, openCreate, openPreview }) {
                                 </tbody>
                             </table>
                         </div>
-                        <div className="flex flex-col sm:flex-row items-center justify-between p-4">
-                             <div className="flex items-center space-x-3 mt-2 sm:mt-0">
+                        <div className="flex justify-between items-center px-5 py-5">
+                            <span className="text-sm font-normal text-gray-500">Showing {itemsPerPage} of {totalPages * itemsPerPage}</span>
+                            <div className="inline-flex items-center -space-x-px">
                                 <button
-                                    onClick={() => paginate(currentPage - 1)}
-                                    className="inline-flex items-center justify-center w-8 h-8 leading-5 text-gray-500 bg-white border rounded-lg hover:bg-gray-100"
+                                    type="button"
+                                    onClick={() => setCurrentPage(prevPage => Math.max(prevPage - 1, 1))}
+                                    className="h-8 w-8 inline-flex items-center justify-center text-gray-500 border border-gray-200 rounded-l-lg bg-gray-50"
+                                    disabled={currentPage === 1}
+                                    aria-label="Previous Page"
                                 >
-                                    <CaretLeft size={20} weight="bold" />
+                                    <CaretLeft size={18} weight="bold" />
                                 </button>
-                                {currentSet.map(pageNumber => (
+                                {currentSet.map((pageNumber) => (
                                     <button
                                         key={pageNumber}
+                                        type="button"
+                                        className={`h-8 w-8 border border-gray-200 text-sm ${currentPage === pageNumber ? "text-blue-600" : "text-gray-500"} bg-white`}
                                         onClick={() => paginate(pageNumber)}
-                                        className={`inline-flex items-center justify-center w-8 h-8 leading-5 ${pageNumber === currentPage ? "text-blue-600 bg-blue-100" : "text-gray-500 bg-white"} border rounded-lg hover:bg-gray-100`}
+                                        aria-label={`Page ${pageNumber}`}
                                     >
                                         {pageNumber}
                                     </button>
                                 ))}
                                 <button
-                                    onClick={() => paginate(currentPage + 1)}
-                                    className="inline-flex items-center justify-center w-8 h-8 leading-5 text-gray-500 bg-white border rounded-lg hover:bg-gray-100"
+                                    type="button"
+                                    onClick={() => setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages))}
+                                    className="h-8 w-8 inline-flex items-center justify-center text-gray-500 border border-gray-200 rounded-r-lg bg-gray-50"
+                                    disabled={currentPage === totalPages}
+                                    aria-label="Next Page"
                                 >
-                                    <CaretRight size={20} weight="bold" />
+                                    <CaretRight size={18} weight="bold" />
                                 </button>
                             </div>
                         </div>

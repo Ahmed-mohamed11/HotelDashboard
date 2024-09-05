@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback } from "react";
+import { useState, useCallback, memo } from "react";
 import { Plus, X } from "@phosphor-icons/react";
 import FormBtnIcon from "../form/FormBtnIcon";
 import FormText from "../form/FormText";
@@ -7,10 +7,10 @@ import FormNumber from "../form/FormNumber";
 import FormEmail from "../form/FormEmail";
 import FormSelect from "../form/FormSelect";
 import FormInput from "../form/FormInput";
-import debounce from 'lodash.debounce';
 import { Badge, Button, Input, Label } from "reactstrap";
 
-export default function PreviewHotel({ closeModal }) {
+// Memoized PreviewHotel component to prevent unnecessary re-renders
+const PreviewHotel =  ({ closeModal }) => {
     const [formData, setFormData] = useState({
         customerName: "name",
         roomNumber: "50",
@@ -23,16 +23,6 @@ export default function PreviewHotel({ closeModal }) {
         checkIn: "17/4/2002",
         checkOut: "18/4/2002"
     });
-
-
-
-    const handleChange = useCallback(debounce((e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    }, 300), []);
 
     const handleBackgroundClick = (e) => {
         if (e.target === e.currentTarget) {
@@ -56,9 +46,9 @@ export default function PreviewHotel({ closeModal }) {
                             type="button"
                             onClick={closeModal}
                             className="text-gray-400 hover:bg-gray-200 rounded-lg text-sm p-1.5 inline-flex items-center"
+                            aria-label="Close modal"
                         >
                             <X size={18} weight="bold" />
-                            <span className="sr-only">Close modal</span>
                         </button>
                     </div>
                     <form>
@@ -126,7 +116,6 @@ export default function PreviewHotel({ closeModal }) {
                                             { value: "hotel2", label: "Hotel 2" },
                                             { value: "hotel3", label: "Hotel 3" },
                                         ]}
-                                        handleChange={handleChange}
                                         readOnly
                                     />
                                 </div>
@@ -178,32 +167,29 @@ export default function PreviewHotel({ closeModal }) {
                                 <div className="space-y-2">
                                     <Label>Features</Label>
                                     <div className="flex space-x-1">
-                                        <Badge variant="default">WIFI</Badge>
-                                        <Badge variant="default">AC</Badge>
-                                        <Badge variant="default">Free breakfast</Badge>
-                                        <Badge variant="default">VIP</Badge>
+                                        <Badge color="secondary">WIFI</Badge>
+                                        <Badge color="secondary">AC</Badge>
+                                        <Badge color="secondary">Free breakfast</Badge>
+                                        <Badge color="secondary">VIP</Badge>
                                     </div>
                                 </div>
                                 <div className="w-1/3">
                                     <Label htmlFor="adults">Adults</Label>
                                     <div className="flex items-center">
-                                        <Button variant="outline">-</Button>
+                                        <Button outline>-</Button>
                                         <Input id="adults" value="2" className="text-center" readOnly />
-                                        <Button variant="outline">+</Button>
+                                        <Button outline>+</Button>
                                     </div>
                                 </div>
                                 <div className="w-1/3">
                                     <Label htmlFor="children">Children</Label>
                                     <div className="flex items-center">
-                                        <Button variant="outline">-</Button>
+                                        <Button outline>-</Button>
                                         <Input id="children" value="2" className="text-center" readOnly />
-                                        <Button variant="outline">+</Button>
+                                        <Button outline>+</Button>
                                     </div>
                                 </div>
                             </div>
-
-
-
                             <div className="flex justify-center items-center gap-3 my-5">
                                 <div className="rounded-3xl bg-green-700">
                                     <FormBtnIcon
@@ -211,6 +197,7 @@ export default function PreviewHotel({ closeModal }) {
                                         Icon={Plus}
                                         type="submit"
                                         className="w-full mt-6 text-white font-bold py-2 px-4 rounded"
+                                        aria-label="Approve Booking"
                                     />
                                 </div>
                                 <div className="rounded-3xl bg-red-700">
@@ -219,7 +206,7 @@ export default function PreviewHotel({ closeModal }) {
                                         Icon={Plus}
                                         type="submit"
                                         className="w-full mt-6 text-white font-bold py-2 px-4 rounded"
-
+                                        aria-label="Decline Booking"
                                     />
                                 </div>
                             </div>
@@ -229,4 +216,6 @@ export default function PreviewHotel({ closeModal }) {
             </div>
         </div>
     );
-}
+};
+
+export default PreviewHotel;

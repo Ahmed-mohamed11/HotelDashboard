@@ -202,7 +202,7 @@ const Main = ({ role }) => {
     <div>
       <div className="flex flex-col xl:flex-row lg:flex-row  items-center gap-4 w-full p-4">
         <div className="flex-1">
-          <div className="bg-white shadow-md py-4 rounded-3xl   xl:w-[43.8vw] lg:w-[33vw]  pe-5 ps-4">
+          <div className="bg-white shadow-md py-4 rounded-3xl   xl:w-[43.8vw]    pe-5 ps-4">
             <div className="flex justify-between">
               <div>
                 <h3 className="fw-bold font-sans">Today’s Sales</h3>
@@ -263,11 +263,7 @@ const Main = ({ role }) => {
       </div>
 
       <div className="mt-4 grid gap-8">
-        <div className="flex items-center justify-between flex-col md:flex-row lg:flex-row xl:flex-row gap-4">
-          <ReactApexChart options={onlineOfflineOptions} series={onlineOfflineSeries} type="bar" height={300} />
-          <ReactApexChart options={customerSatisfactionOptions} series={customerSatisfactionSeries} type="line" height={300} />
-          <ReactApexChart options={roomsOptions} series={roomsSeries} type="bar" height={300} />
-        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 gap-4  ">
           <ReactApexChart
             options={donutChartOptions}
@@ -276,9 +272,14 @@ const Main = ({ role }) => {
             height={350}
           />        <ReactApexChart options={groupedBarChartOptions} series={groupedBarChartSeries} type="bar" height={300} />
         </div>
+        <div className="flex items-center justify-between flex-wrap flex-col md:flex-row lg:flex-row xl:flex-row gap-4">
+          <ReactApexChart options={onlineOfflineOptions} series={onlineOfflineSeries} type="bar" height={300} />
+          <ReactApexChart options={customerSatisfactionOptions} series={customerSatisfactionSeries} type="line" height={300} />
+          <ReactApexChart options={roomsOptions} series={roomsSeries} type="bar" height={300} />
+        </div>
       </div>
     </div>
   );
 };
 
-export default Main;
+export default React.memo(Main);

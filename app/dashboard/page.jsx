@@ -1,3 +1,4 @@
+// app/dashboard/page.jsx
 'use client';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { FaStore, FaSitemap, FaUser, FaSignOutAlt } from 'react-icons/fa';
@@ -5,7 +6,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import { gsap } from 'gsap';
 import Link from 'next/link';
 import Image from 'next/image';
-import logo from '../images/Logo-green 1.svg';
+import logo from '../images/Logo-green 1.svg'; // Adjust path as needed
 
 const routes = [
     { path: '/', name: 'Dashboard', icon: <FaSitemap /> },
@@ -52,7 +53,7 @@ const Dashboard = ({ children }) => {
             >
                 <div>
                     <div className="flex justify-evenly md:justify-start items-end my-3 font-bold text-3xl aside-content">
-                        <Image src={logo} alt="Zayer Logo" width={70}  height="auto" className="lg:block relative -top-5 sm:hidden shadow-gray-200 shadow-md rounded-full" />
+                        <Image src={logo} alt="Zayer Logo" width={70} height="auto" className="lg:block relative -top-5 sm:hidden shadow-gray-200 shadow-md rounded-full" />
                         <span className="text-[#151D48] text-5xl">Zayer</span>
                     </div>
                     <nav>
@@ -72,7 +73,7 @@ const Dashboard = ({ children }) => {
             </aside>
 
             <main role="main" className="flex-1 ml-0 lg:ml-64 p-4 transition-all duration-300 ease-in-out">
-                {children}
+                {children}  
             </main>
         </div>
     );
